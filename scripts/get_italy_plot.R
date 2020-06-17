@@ -2,6 +2,7 @@ install.packages('ggmap', 'igraph', 'dplyr')
 library(ggmap)
 library(igraph)
 library(dplyr)
+library(stringr)
 
 mobility_pre <- read.csv('data/2020-02-25.csv',sep=";")
 
@@ -26,18 +27,18 @@ end_locs <- mobility_pre_ita %>%
     province = end_name_stack) %>% 
   distinct()
 locations <- bind_rows(start_locs, end_locs) %>% distinct()
-locations$name <- droplevels(locations$name)
-locations$province <- droplevels(locations$province)
+locations$name <- locations$name
+locations$province <- locations$province
 regions = str_match_all(locations$province, '^(.*) //.*')
 locations$region <- as.factor(sapply(regions, function(x) x[2]))
 
 movements <- mobility_pre_ita %>% 
   select(start_polygon_names, end_polygon_names, utc_date, time, length_km, 
          metric_name, metric_value, level, tile_size, country)
-movements$start_polygon_names <- droplevels(movements$start_polygon_names)
-movements$end_polygon_names <- droplevels(movements$end_polygon_names)
-V(g)$color <- as.numeric(locations$region)
+movements$start_polygon_names <- movements$start_polygon_names
+movements$end_polygon_names <- movements$end_polygon_names
 g <- graph_from_data_frame(movements, directed=T, vertices=locations)
+V(g)$color <- as.numeric(locations$region)
 plot(g, vertex.size=5, arrow.size=1)
 
 #TODO: Use ggmap as background for the igraph plot
