@@ -4,6 +4,7 @@ library(ggmap)
 library(igraph)
 library(dplyr)
 library(stringr)
+library(statnet)
 
 standardize <- function(x){(x-min(x))/(max(x)-min(x))}
 
