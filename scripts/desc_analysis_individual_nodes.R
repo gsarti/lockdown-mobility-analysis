@@ -24,12 +24,6 @@ deg_post <- igraph::degree(graph_post)
 ideg_post <- igraph::degree(graph_post, mode="in") 
 odeg_post <- igraph::degree(graph_post, mode="out")
 
-par(mfrow=c(1,1))
-plot(ideg_pre, odeg_pre, type="n", xlab="inDegree (popularity)", ylab="outDegree (activity)") # Plot ideg by odeg
-abline(0, 1, lty=3)
-text(jitter(ideg_pre), jitter(ideg_pre), igraph::vertex_attr(graph_pre, "name"), cex=0.75, col=2)
-
-
 # In-degree distribution
 par(mfrow=c(1,3))
 hist(ideg_pre, xlab="degree", main="Mobility pre lockdown in-degree distribution", prob=TRUE)
@@ -66,14 +60,30 @@ eig_post <- igraph::eigen_centrality(graph_post)
 # graphical representation of the graphs where the size of each vertex is proportional 
 # to closeness
 par(mfrow=c(1,3))
-plot_size <- function(graph){E(graph)$metric_value/15000}
-igraph::plot.igraph(graph_pre, vertex.size=cls_pre*1500,edge.arrow.size=0.02,
+plot_size <- function(graph){(as.numeric(E(graph)$metric_value)/mean(as.numeric(E(graph)$metric_value)))/10000}
+igraph::plot.igraph(graph_pre, vertex.size=cls_pre*1500,edge.arrow.size=0.02,edge.lty=c("dotted"),
                     edge.width=plot_size(graph_pre))
-igraph::plot.igraph(graph_mid, vertex.size=cls_mid*1500,edge.arrow.size=0.02,
+igraph::plot.igraph(graph_mid, vertex.size=cls_mid*1500,edge.arrow.size=0.02,edge.lty=c("dotted"),
                     edge.width=plot_size(graph_mid))
-igraph::plot.igraph(graph_post, vertex.size=cls_post*1500,edge.arrow.size=0.02,
+igraph::plot.igraph(graph_post, vertex.size=cls_post*1500,edge.arrow.size=0.02,edge.lty=c("dotted"),
                     edge.width=plot_size(graph_post))
 
+# graphical representation of the graphs where the size of each vertex is proportional 
+# to betweenness
+par(mfrow=c(1,3))
+plot_size <- function(graph){(as.numeric(E(graph)$metric_value)/mean(as.numeric(E(graph)$metric_value)))/10000}
+igraph::plot.igraph(graph_pre, vertex.size=btn_pre/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_pre))
+igraph::plot.igraph(graph_mid, vertex.size=btn_mid/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_mid))
+igraph::plot.igraph(graph_post, vertex.size=btn_post/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_post))
+
+assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
+assort_mid <- assortativity_degree(graph_mid,directed = TRUE)
+assort_post <- assortativity_degree(graph_post,directed = TRUE)
+cat(sprintf("Nertwork assortativity by degree pre-lockdown: %f,\nNertwork assortativity by degree mid-lockdown: %f,\nNertwork assortativity by degree post-lockdown: %f\n", 
+            assort_pre,assort_mid,assort_post))
 
 
 
