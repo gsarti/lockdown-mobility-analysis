@@ -6,14 +6,14 @@ mobility_post <- read.csv('data/2020-05-05.csv',sep=";")
 
 ### MOBILITY WITHOUT INTRA-PROVINCES MOVEMENTS
 
-graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F)
-graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F)
-graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F)
+graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = FALSE)
+graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = FALSE)
+graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = FALSE)
 
 # Degree centrality for the 3 graphs
 
 deg_pre <- igraph::degree(graph_pre) 
-ideg_pre <- igraph::degree(graph_pre, mode="in") 
+ideg_pre <- igraph::degree(graph_pre, mode="in")   
 odeg_pre <- igraph::degree(graph_pre, mode="out")
 
 deg_mid <- igraph::degree(graph_mid) 
@@ -61,11 +61,11 @@ eig_post <- igraph::eigen_centrality(graph_post)
 # to closeness
 par(mfrow=c(1,3))
 plot_size <- function(graph){(as.numeric(E(graph)$metric_value)/mean(as.numeric(E(graph)$metric_value)))/10000}
-igraph::plot.igraph(graph_pre, vertex.size=cls_pre*1500,edge.arrow.size=0.02,edge.lty=c("dotted"),
+igraph::plot.igraph(graph_pre, vertex.size=cls_pre*10000,edge.arrow.size=0.02,edge.lty=c("dotted"),
                     edge.width=plot_size(graph_pre))
-igraph::plot.igraph(graph_mid, vertex.size=cls_mid*1500,edge.arrow.size=0.02,edge.lty=c("dotted"),
+igraph::plot.igraph(graph_mid, vertex.size=cls_mid*10000,edge.arrow.size=0.02,edge.lty=c("dotted"),
                     edge.width=plot_size(graph_mid))
-igraph::plot.igraph(graph_post, vertex.size=cls_post*1500,edge.arrow.size=0.02,edge.lty=c("dotted"),
+igraph::plot.igraph(graph_post, vertex.size=cls_post*10000,edge.arrow.size=0.02,edge.lty=c("dotted"),
                     edge.width=plot_size(graph_post))
 
 # graphical representation of the graphs where the size of each vertex is proportional 
@@ -85,6 +85,14 @@ assort_post <- assortativity_degree(graph_post,directed = TRUE)
 cat(sprintf("Nertwork assortativity by degree pre-lockdown: %f,\nNertwork assortativity by degree mid-lockdown: %f,\nNertwork assortativity by degree post-lockdown: %f\n", 
             assort_pre,assort_mid,assort_post))
 
+hist(E(graph_pre)$weight)
+hist(E(graph_mid)$weight)
+hist(E(graph_post)$weight)
+
+
+hist(E(graph_pre)$weight,xlim = c(0,2000))
+hist(E(graph_mid)$weight, xlim = c(0,2000))
+hist(E(graph_post)$weight, xlim = c(0,2000))
 
 
 # ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS 
