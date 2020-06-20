@@ -47,7 +47,7 @@ plot(graph_mid_local, vertex.size=10, edge.width=plot_size(graph_mid_local,3),ed
 plot(graph_post_local, vertex.size=10, edge.width=plot_size(graph_post_local,3),edge.lty=c("dotted"),  edge.arrow.size=0.1)
 
 # Egocentric network of a region
-regions <- c("Friuli-Venezia Giulia")
+regions <- c("Lombardy")
 graph_pre_local <- igraph::subgraph.edges(graph_pre_inter, eids=which(E(graph_pre_inter)$head_region %in% regions), delete.vertices=T)
 graph_mid_local <- igraph::subgraph.edges(graph_mid_inter, eids=which(E(graph_mid_inter)$head_region %in% regions), delete.vertices=T)
 graph_post_local <- igraph::subgraph.edges(graph_post_inter, eids=which(E(graph_post_inter)$head_region %in% regions), delete.vertices=T)
