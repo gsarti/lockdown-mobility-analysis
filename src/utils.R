@@ -10,7 +10,7 @@ standardize <- function(x){(x-min(x))/(max(x)-min(x))}
 #mean(as.numeric(E(g)$metric_value)))/
 plot_size <- function(g, scale=10){lapply(E(g)$weight, function(x){ max(log(as.numeric(x))/scale, 0)})}
 
-create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T, multi=T) {
+create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
   # Filter on Italy and only metric "n" (raw mov counts)
   # and fill NAs with 0
   dataframe_ita <- dataframe %>% 
@@ -32,12 +32,22 @@ create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T, mu
   locations$region <- as.factor(sapply(regions, function(x) x[2]))
   # Build the movements edgelist in the required format
   movements <- dataframe_ita %>% 
-    select(start_polygon_names, end_polygon_names, utc_date, time, length_km, 
+    select(start_polygon_names, end_polygon_names, head_province = start_name_stack, 
+           tail_province = end_name_stack, utc_date, time, length_km, 
            metric_name, metric_value, level, tile_size, country)
+  head_regions <- str_match_all(movements$head_province, '^(.*) //.*')
+  movements$head_region <- as.factor(sapply(head_regions, function(x) x[2]))
+  tail_regions <- str_match_all(movements$tail_province, '^(.*) //.*')
+  movements$tail_region <- as.factor(sapply(tail_regions, function(x) x[2]))
   # We filter out small movements that were set to 0 for privacy reasons
   if(zeros == F){
     movements <- subset(movements, movements["metric_value"] > 0)
   }
+  # Average length_km and metric values for different times
+  movements <- movements %>% 
+    group_by(start_polygon_names, end_polygon_names, head_region, tail_region,
+             utc_date, metric_name, level, tile_size, country) %>% 
+    summarise(length_km = mean(length_km), metric_value = mean(metric_value))
   # Create graph, set color
   g <- graph_from_data_frame(movements, directed=T, vertices=locations)
   V(g)$color <- as.numeric(locations$region)
@@ -60,7 +70,7 @@ plot_graph_on_map <- function(g, map) {
   edgelist <- get.edgelist(g)
   edgelist[,1]<-as.numeric(match(edgelist[,1],V(g)$name))
   edgelist[,2]<-as.numeric(match(edgelist[,2],V(g)$name))
-  E(g)$color = rgb(0,0,0,standardize(E(g)$length_km))
+  E(g)$color = rgb(1,0,0,standardize(E(g)$length_km))
   edges <- data.frame(plot_vector[edgelist[,1],],
                       plot_vector[edgelist[,2],], E(g)$color)
   colnames(edges) <- c("X1", "Y1", "X2", "Y2", "Color")            
