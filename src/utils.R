@@ -58,7 +58,8 @@ create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
   if(loops == F){
     g <- simplify(g, remove.multiple = F)
   }
-  
+  V(g)$in_strength <- strength(g, mode="in")
+  V(g)$out_strength <- strength(g, mode="out")
   return(g)
 }
 
