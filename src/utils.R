@@ -8,7 +8,7 @@ library(statnet)
 
 standardize <- function(x){(x-min(x))/(max(x)-min(x))}
 
-create_graph_from_data <- function(dataframe, metric="n", loops=T) {
+create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
   # Filter on Italy and only metric "n" (raw mov counts)
   # and fill NAs with 0
   dataframe_ita <- dataframe %>% 
@@ -32,11 +32,15 @@ create_graph_from_data <- function(dataframe, metric="n", loops=T) {
     select(start_polygon_names, end_polygon_names, utc_date, time, length_km, 
            metric_name, metric_value, level, tile_size, country)
   # Create graph, set color and 
-  movements <- subset(movements, movements["metric_value"] > 0)
+  if(zeros == FALSE){
+    movements <- subset(movements, movements["metric_value"] > 0)
+  }
   g <- graph_from_data_frame(movements, directed=T, vertices=locations)
   V(g)$color <- as.numeric(locations$region)
   g$layout <- cbind(V(g)$x, V(g)$y)
+  if(zeros == FALSE){
   E(g)$weight <- movements[1:nrow(movements),]$metric_value
+  }
   if(loops == F){
     g <- simplify(g)
     }
