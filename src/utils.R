@@ -6,9 +6,8 @@ library(dplyr)
 library(stringr)
 library(statnet)
 
-standardize <- function(x){(x-min(x))/(max(x)-min(x))}
-#mean(as.numeric(E(g)$metric_value)))/
-plot_size <- function(g, scale=10){lapply(E(g)$weight, function(x){ max(log(as.numeric(x))/scale, 0)})}
+normalize_counts <- function(x, scale){ max(log(as.numeric(x))/scale, 0)}
+plot_size <- function(g, scale=10){lapply(E(g)$weight, function(x) {normalize_counts(x, scale = scale)})}
 
 create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
   # Filter on Italy and only metric "n" (raw mov counts)
@@ -71,14 +70,23 @@ plot_graph_on_map <- function(g, map) {
   edgelist <- get.edgelist(g)
   edgelist[,1]<-as.numeric(match(edgelist[,1],V(g)$name))
   edgelist[,2]<-as.numeric(match(edgelist[,2],V(g)$name))
-  E(g)$color = rgb(1,0,0,standardize(E(g)$length_km))
+  E(g)$color = lapply(list(E(g)), function(x){
+    w <- min(normalize_counts(x$weight, 20), 1)
+    ifelse(x$head_region == x$tail_region, rgb(0,0,0,w), rgb(1,0,0,w))
+  })
   edges <- data.frame(plot_vector[edgelist[,1],],
                       plot_vector[edgelist[,2],], E(g)$color)
-  colnames(edges) <- c("X1", "Y1", "X2", "Y2", "Color")            
+  colnames(edges) <- c("X1", "Y1", "X2", "Y2", "Color")
+  plot_vector$region <- as.factor(V(g)$region)
   p + geom_segment(aes(x=X1, y=Y1, xend = X2, yend = Y2), 
-                   data=edges, size = 0.5, colour=edges$Color) + 
-    geom_point(aes(V1, V2), data=plot_vector) + 
-    xlab('Longitude') + ylab('Latitude')
+                   data=edges, size = 0.7, colour=edges$Color) + 
+    geom_point(aes(V1, V2, colour=factor(region)), data=plot_vector) + 
+    xlab('Longitude') + ylab('Latitude') +
+    theme(axis.title = element_blank(),
+          legend.position = "none",
+          axis.ticks = element_blank(),
+          axis.text = element_blank()
+    )
 }
 
 coreness_layout <- function(g) {
