@@ -30,7 +30,7 @@ Taken from Moodle:
 
 ### 1
 
-- [ ] Review techniques of descriptive analysis presented during the course
+- [x] Review techniques of descriptive analysis presented during the course
 - [ ] Select a metric to weight edges among those available
 - [ ] Perform descriptive analysis of the 3 networks in an R script
 - [ ] Write report section comparing similarities and differences in the analysis
@@ -47,7 +47,7 @@ Taken from Moodle:
 ### 3
 
 - [ ] Review exponential random graphs presented during the course
-- [ ] Select subnetworks for all three dataset to fit ERGs
+- [x] Select subnetworks for all three dataset to fit ERGs (All italian provinces, non-looping edges)
 - [ ] Select additional features to improve the quality of fit
 - [ ] Perform the modeling R script
 - [ ] Write report section showing the structure and performances of various models

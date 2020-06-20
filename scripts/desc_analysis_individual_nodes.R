@@ -6,9 +6,9 @@ mobility_post <- read.csv('data/2020-05-05.csv',sep=";")
 
 ### MOBILITY WITHOUT INTRA-PROVINCES MOVEMENTS
 
-graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = FALSE)
-graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = FALSE)
-graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = FALSE)
+graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
+graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
+graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
 
 # Degree centrality for the 3 graphs
 
@@ -60,24 +60,22 @@ eig_post <- igraph::eigen_centrality(graph_post)
 # graphical representation of the graphs where the size of each vertex is proportional 
 # to closeness
 par(mfrow=c(1,3))
-plot_size <- function(graph){(as.numeric(E(graph)$metric_value)/mean(as.numeric(E(graph)$metric_value)))/10000}
-igraph::plot.igraph(graph_pre, vertex.size=cls_pre*10000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_pre))
-igraph::plot.igraph(graph_mid, vertex.size=cls_mid*10000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_mid))
-igraph::plot.igraph(graph_post, vertex.size=cls_post*10000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_post))
+igraph::plot.igraph(graph_pre, vertex.size=cls_pre*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_pre, 5))
+igraph::plot.igraph(graph_mid, vertex.size=cls_mid*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_mid, 5))
+igraph::plot.igraph(graph_post, vertex.size=cls_post*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_post, 5))
 
 # graphical representation of the graphs where the size of each vertex is proportional 
 # to betweenness
 par(mfrow=c(1,3))
-plot_size <- function(graph){(as.numeric(E(graph)$metric_value)/mean(as.numeric(E(graph)$metric_value)))/10000}
 igraph::plot.igraph(graph_pre, vertex.size=btn_pre/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_pre))
+                    edge.width=plot_size(graph_pre, 5))
 igraph::plot.igraph(graph_mid, vertex.size=btn_mid/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_mid))
+                    edge.width=plot_size(graph_mid, 5))
 igraph::plot.igraph(graph_post, vertex.size=btn_post/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_post))
+                    edge.width=plot_size(graph_post, 5))
 
 assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
 assort_mid <- assortativity_degree(graph_mid,directed = TRUE)
@@ -97,9 +95,9 @@ hist(E(graph_post)$weight, xlim = c(0,2000))
 
 # ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS 
 
-graph_pre <- create_graph_from_data(mobility_pre, metric="n")
-graph_mid <- create_graph_from_data(mobility_mid, metric="n")
-graph_post <- create_graph_from_data(mobility_post, metric="n")
+graph_pre <- create_graph_from_data(mobility_pre, metric="n", zeros = F)
+graph_mid <- create_graph_from_data(mobility_mid, metric="n", zeros = F)
+graph_post <- create_graph_from_data(mobility_post, metric="n", zeros = F)
 
 # degree centrality
 deg_pre <- igraph::degree(graph_pre) 
@@ -148,12 +146,11 @@ eig_mid <- igraph::eigen_centrality(graph_mid)
 eig_post <- igraph::eigen_centrality(graph_post)
 
 par(mfrow=c(1,3))
-plot_size <- function(graph){E(graph)$metric_value/15000}
 igraph::plot.igraph(graph_pre, vertex.size=cls_pre*1500,edge.arrow.size=0.02,
-                    edge.width=plot_size(graph_pre))
+                    edge.width=plot_size(graph_pre, 5))
 igraph::plot.igraph(graph_mid, vertex.size=cls_mid*1500,edge.arrow.size=0.02,
-                    edge.width=plot_size(graph_mid))
+                    edge.width=plot_size(graph_mid, 5))
 igraph::plot.igraph(graph_post, vertex.size=cls_post*1500,edge.arrow.size=0.02,
-                    edge.width=plot_size(graph_post))
+                    edge.width=plot_size(graph_post, 5))
 
 

@@ -7,13 +7,16 @@ library(stringr)
 library(statnet)
 
 standardize <- function(x){(x-min(x))/(max(x)-min(x))}
+#mean(as.numeric(E(g)$metric_value)))/
+plot_size <- function(g, scale=10){lapply(E(g)$weight, function(x){ max(log(as.numeric(x))/scale, 0)})}
 
-create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
+create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T, multi=T) {
   # Filter on Italy and only metric "n" (raw mov counts)
   # and fill NAs with 0
   dataframe_ita <- dataframe %>% 
     filter(country == "IT", metric_name == metric) %>% 
-    mutate(metric_value = ifelse(is.na(metric_value), 0, metric_value))
+    mutate(metric_value = ifelse(is.na(metric_value), 0, metric_value)) %>% 
+    arrange(start_polygon_names, end_polygon_names, start_name_stack, end_name_stack)
   # Build the vertex list for both start and end locations
   start_locs <- dataframe_ita %>% 
     select(name = start_polygon_names, id = start_polygon_id,
@@ -31,19 +34,20 @@ create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
   movements <- dataframe_ita %>% 
     select(start_polygon_names, end_polygon_names, utc_date, time, length_km, 
            metric_name, metric_value, level, tile_size, country)
-  # Create graph, set color and 
-  if(zeros == FALSE){
+  # We filter out small movements that were set to 0 for privacy reasons
+  if(zeros == F){
     movements <- subset(movements, movements["metric_value"] > 0)
   }
+  # Create graph, set color
   g <- graph_from_data_frame(movements, directed=T, vertices=locations)
   V(g)$color <- as.numeric(locations$region)
   g$layout <- cbind(V(g)$x, V(g)$y)
-  if(zeros == FALSE){
+  if(zeros == F){
   E(g)$weight <- movements[1:nrow(movements),]$metric_value
   }
   if(loops == F){
-    g <- simplify(g)
-    }
+    g <- simplify(g, remove.multiple = F)
+  }
   
   return(g)
 }
@@ -56,7 +60,7 @@ plot_graph_on_map <- function(g, map) {
   edgelist <- get.edgelist(g)
   edgelist[,1]<-as.numeric(match(edgelist[,1],V(g)$name))
   edgelist[,2]<-as.numeric(match(edgelist[,2],V(g)$name))
-  E(g)$color = rgb(0,0,0,standardize(E(g)$length_km)/10)
+  E(g)$color = rgb(0,0,0,standardize(E(g)$length_km))
   edges <- data.frame(plot_vector[edgelist[,1],],
                       plot_vector[edgelist[,2],], E(g)$color)
   colnames(edges) <- c("X1", "Y1", "X2", "Y2", "Color")            
@@ -64,4 +68,19 @@ plot_graph_on_map <- function(g, map) {
                    data=edges, size = 0.5, colour=edges$Color) + 
     geom_point(aes(V1, V2), data=plot_vector) + 
     xlab('Longitude') + ylab('Latitude')
+}
+
+coreness_layout <- function(g) {
+  coreness <- graph.coreness(g);
+  xy <- array(NA, dim=c(length(coreness), 2));
+  shells <- sort(unique(coreness));
+  for(shell in shells) {
+    v <- 1 - ((shell-1) / max(shells));
+    nodes_in_shell <- sum(coreness==shell);
+    angles <- seq(0,360,(360/nodes_in_shell));
+    angles <- angles[-length(angles)]; # remove last element
+    xy[coreness==shell, 1] <- sin(angles) * v;
+    xy[coreness==shell, 2] <- cos(angles) * v;
+  }
+  return(xy);
 }
