@@ -35,7 +35,11 @@ create_graph_from_data <- function(dataframe, metric="n", loops=T) {
   g <- graph_from_data_frame(movements, directed=T, vertices=locations)
   V(g)$color <- as.numeric(locations$region)
   g$layout <- cbind(V(g)$x, V(g)$y)
-  if(loops == F){g <- simplify(g)}
+  E(g)$weight <- movements[1:nrow(movements),]$metric_value
+  if(loops == F){
+    g <- simplify(g, edge.attr.comb="ignore")
+    }
+  
   return(g)
 }
 
