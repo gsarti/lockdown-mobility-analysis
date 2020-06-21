@@ -50,38 +50,45 @@ cat(sprintf("Network density pre-lockdown: %f,\nNetwork density mid-lockdown: %f
             denisty_pre,density_mid,denisty_post))
 
 
-# # Centrality indexes
-# btn_pre <- igraph::betweenness(graph_pre)
-# btn_mid <- igraph::betweenness(graph_mid)
-# btn_post <- igraph::betweenness(graph_post)
-# 
-# cls_pre <- igraph::closeness(graph_pre)
-# cls_mid <- igraph::closeness(graph_mid)
-# cls_post <- igraph::closeness(graph_post)
-# 
-# eig_pre <- igraph::eigen_centrality(graph_pre)
-# eig_mid <- igraph::eigen_centrality(graph_mid)
-# eig_post <- igraph::eigen_centrality(graph_post)
-# 
-# graphical representation of the graphs where the size of each vertex is proportional 
-# to closeness
-#par(mfrow=c(1,3))
-#igraph::plot.igraph(graph_pre, vertex.size=cls_pre*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-#                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
-#igraph::plot.igraph(graph_mid, vertex.size=cls_mid*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-#                    edge.width=plot_size(graph_mid, E(graph_mid)$weight, 5))
-#igraph::plot.igraph(graph_post, vertex.size=cls_post*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-#                    edge.width=plot_size(graph_post, E(graph_post)$weight, 5))
+# Centrality indexes
 
-# graphical representation of the graphs where the size of each vertex is proportional 
+# Obtain weights that reflects distance, so the inverse of the "strength" or "popularity" of nodes
+E(graph_pre)$inverted_weight <- (1/E(graph_pre)$weight )*10000 # multiped by a constant to have all weights >1 
+E(graph_mid)$inverted_weight <- (1/E(graph_mid)$weight )*10000
+E(graph_post)$inverted_weight <- (1/E(graph_post)$weight )*10000
+ 
+btn_pre <- igraph::betweenness(graph_pre,weights = E(graph_pre)$inverted_weight )
+btn_mid <- igraph::betweenness(graph_mid, weights = E(graph_mid)$inverted_weight  )
+btn_post <- igraph::betweenness(graph_post, weights =  E(graph_post)$inverted_weight)
+
+# cls_pre <- igraph::closeness(graph_pre,weights = E(graph_pre)$inverted_weight )
+# cls_mid <- igraph::closeness(graph_mid, weights = E(graph_mid)$inverted_weight  )
+# cls_post <- igraph::closeness(graph_post, weights =  E(graph_post)$inverted_weight)
+
+eig_pre <- igraph::eigen_centrality(graph_pre,weights = E(graph_pre)$inverted_weight )
+eig_mid <- igraph::eigen_centrality(graph_mid, weights = E(graph_mid)$inverted_weight )
+eig_post <- igraph::eigen_centrality(graph_post, weights =  E(graph_post)$inverted_weight)
+
+#graphical representation of the graphs where the size of each vertex is proportional
 # to betweenness
-#par(mfrow=c(1,3))
-#igraph::plot.igraph(graph_pre, vertex.size=btn_pre/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-#                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
-#igraph::plot.igraph(graph_mid, vertex.size=btn_mid/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-#                    edge.width=plot_size(graph_mid, E(graph_mid)$weight, 5))
-#igraph::plot.igraph(graph_post, vertex.size=btn_post/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-#                    edge.width=plot_size(graph_post, E(graph_post)$weight, 5))
+par(mfrow=c(1,3))
+igraph::plot.igraph(graph_pre, vertex.size=btn_pre/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
+igraph::plot.igraph(graph_mid, vertex.size=btn_mid/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_mid, E(graph_mid)$weight, 5))
+igraph::plot.igraph(graph_post, vertex.size=btn_post/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_post, E(graph_post)$weight, 5))
+
+#graphical representation of the graphs where the size of each vertex is proportional
+# to eigenvector centrality
+par(mfrow=c(1,3))
+igraph::plot.igraph(graph_pre, vertex.size=eig_pre$vector*10,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
+igraph::plot.igraph(graph_mid, vertex.size=eig_mid$vector*10,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_mid, E(graph_mid)$weight, 5))
+igraph::plot.igraph(graph_post, vertex.size=eig_post$vector*10,edge.arrow.size=0.02,edge.lty=c("dotted"),
+                    edge.width=plot_size(graph_post, E(graph_post)$weight, 5))
+
 
 assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
 assort_mid <- assortativity_degree(graph_mid,directed = TRUE)
@@ -139,9 +146,17 @@ igraph::components(sub_mid_weight_up, mode = "weak")
 igraph::components(sub_post_weight_up, mode = "weak")
 
 
+cliques_pre<- largest.cliques(graph_pre)
+cliques_mid <- largest_cliques(graph_mid)
+cliques_post <- largest_cliques(graph_post)
 
-# # ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS 
-# 
+print(cliques_pre)
+print(cliques_mid)
+print(cliques_post)
+
+
+# ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS 
+
 # graph_pre <- create_graph_from_data(mobility_pre, metric="n", zeros = F)
 # graph_mid <- create_graph_from_data(mobility_mid, metric="n", zeros = F)
 # graph_post <- create_graph_from_data(mobility_post, metric="n", zeros = F)
