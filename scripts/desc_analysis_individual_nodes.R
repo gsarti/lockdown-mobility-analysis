@@ -61,21 +61,21 @@ eig_post <- igraph::eigen_centrality(graph_post)
 # to closeness
 par(mfrow=c(1,3))
 igraph::plot.igraph(graph_pre, vertex.size=cls_pre*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_pre, 5))
+                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
 igraph::plot.igraph(graph_mid, vertex.size=cls_mid*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_mid, 5))
+                    edge.width=plot_size(graph_mid, E(graph_mid)$weight, 5))
 igraph::plot.igraph(graph_post, vertex.size=cls_post*100000,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_post, 5))
+                    edge.width=plot_size(graph_post, E(graph_post)$weight, 5))
 
 # graphical representation of the graphs where the size of each vertex is proportional 
 # to betweenness
 par(mfrow=c(1,3))
 igraph::plot.igraph(graph_pre, vertex.size=btn_pre/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_pre, 5))
+                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
 igraph::plot.igraph(graph_mid, vertex.size=btn_mid/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_mid, 5))
+                    edge.width=plot_size(graph_mid, E(graph_mid)$weight, 5))
 igraph::plot.igraph(graph_post, vertex.size=btn_post/400,edge.arrow.size=0.02,edge.lty=c("dotted"),
-                    edge.width=plot_size(graph_post, 5))
+                    edge.width=plot_size(graph_post, E(graph_post)$weight, 5))
 
 assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
 assort_mid <- assortativity_degree(graph_mid,directed = TRUE)
@@ -147,10 +147,10 @@ eig_post <- igraph::eigen_centrality(graph_post)
 
 par(mfrow=c(1,3))
 igraph::plot.igraph(graph_pre, vertex.size=cls_pre*1500,edge.arrow.size=0.02,
-                    edge.width=plot_size(graph_pre, 5))
+                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
 igraph::plot.igraph(graph_mid, vertex.size=cls_mid*1500,edge.arrow.size=0.02,
-                    edge.width=plot_size(graph_mid, 5))
+                    edge.width=plot_size(graph_mid, E(graph_pre)$weight, 5))
 igraph::plot.igraph(graph_post, vertex.size=cls_post*1500,edge.arrow.size=0.02,
-                    edge.width=plot_size(graph_post, 5))
+                    edge.width=plot_size(graph_post, E(graph_pre)$weight, 5))
 
 

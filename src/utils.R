@@ -6,8 +6,8 @@ library(dplyr)
 library(stringr)
 library(statnet)
 
-normalize_counts <- function(x, scale){ max(log(as.numeric(x))/scale, 0)}
-plot_size <- function(g, scale=10){lapply(E(g)$weight, function(x) {normalize_counts(x, scale = scale)})}
+normalize_counts <- function(x, scale, min=0){ max(log(as.numeric(x))/scale, min)}
+plot_size <- function(g, attr, scale=10, min=0){unlist(lapply(attr, function(x) {normalize_counts(x, scale = scale, min=min)}))}
 
 create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
   # Filter on Italy and only metric "n" (raw mov counts)
@@ -78,9 +78,10 @@ plot_graph_on_map <- function(g, map) {
                       plot_vector[edgelist[,2],], E(g)$color)
   colnames(edges) <- c("X1", "Y1", "X2", "Y2", "Color")
   plot_vector$region <- as.factor(V(g)$region)
+  plot_vector$size <- unlist(lapply(V(g)$in_strength, function(x){max(log(x),3)}), use.names=FALSE)
   p + geom_segment(aes(x=X1, y=Y1, xend = X2, yend = Y2), 
                    data=edges, size = 0.7, colour=edges$Color) + 
-    geom_point(aes(V1, V2, colour=factor(region)), data=plot_vector) + 
+    geom_point(aes(V1, V2, colour=factor(region), size=size), data=plot_vector) + 
     xlab('Longitude') + ylab('Latitude') +
     theme(axis.title = element_blank(),
           legend.position = "none",
@@ -89,8 +90,8 @@ plot_graph_on_map <- function(g, map) {
     )
 }
 
-coreness_layout <- function(g) {
-  coreness <- graph.coreness(g);
+coreness_layout <- function(g, coreness_func, ...) {
+  coreness <- coreness_func(g, ...);
   xy <- array(NA, dim=c(length(coreness), 2));
   shells <- sort(unique(coreness));
   for(shell in shells) {
@@ -102,4 +103,20 @@ coreness_layout <- function(g) {
     xy[coreness==shell, 2] <- cos(angles) * v;
   }
   return(xy);
+}
+
+weighted_coreness <- function(g, bin_size) {
+  w_cores <- rep(0, length(V(g)))
+  names(w_cores) <- V(g)$name
+  curr_graph <- g
+  i <- 1
+  for(min_size in seq(bin_size, max(V(g)$in_strength)+bin_size, bin_size)) {
+    bin_graph <- igraph::induced.subgraph(curr_graph, vids=which(V(curr_graph)$in_strength <= min_size))
+    if (length(V(bin_graph)) > 0){
+      w_cores[V(bin_graph)$name] <- i
+      i <- i + 1
+    }
+    curr_graph <- igraph::induced.subgraph(curr_graph, vids=which(V(curr_graph)$in_strength > min_size))
+  }
+  return(w_cores)
 }

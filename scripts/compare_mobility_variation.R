@@ -15,9 +15,15 @@ print(paste("2020-05-05 movements (all):", round(sum(E(graph_post_all)$weight)))
 
 # Inter-province connections are present but invisible since their value is much lower than intra-province ones
 par(mfrow=c(1,3))
-igraph::plot.igraph(graph_pre_all, vertex.size=5, edge.width=plot_size(graph_pre_all, 7), edge.lty=c("dotted"), edge.arrow.size=0.02)
-igraph::plot.igraph(graph_mid_all, vertex.size=5, edge.width=plot_size(graph_mid_all, 7), edge.lty=c("dotted"),  edge.arrow.size=0.02)
-igraph::plot.igraph(graph_post_all, vertex.size=5, edge.width=plot_size(graph_post_all, 7), edge.lty=c("dotted"),  edge.arrow.size=0.02)
+igraph::plot.igraph(graph_pre_all, vertex.size=plot_size(graph_pre_all, V(graph_pre_all)$in_strength, 1.5, min=3), 
+                    edge.width=plot_size(graph_pre_all, E(graph_pre_all)$weight, 7), 
+                    edge.lty=c("dotted"), edge.arrow.size=0.02)
+igraph::plot.igraph(graph_mid_all, vertex.size=plot_size(graph_mid_all, V(graph_mid_all)$in_strength, 1.5, min=3), 
+                    edge.width=plot_size(graph_mid_all, E(graph_mid_all)$weight, 7), 
+                    edge.lty=c("dotted"),  edge.arrow.size=0.02)
+igraph::plot.igraph(graph_post_all, vertex.size=plot_size(graph_post_all, V(graph_post_all)$in_strength, 1.5, min=3), 
+                    edge.width=plot_size(graph_post_all, E(graph_post_all)$weight, 7), 
+                    edge.lty=c("dotted"),  edge.arrow.size=0.02)
 
 # ... but is significantly lower inter-provincially
 graph_pre_inter <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
@@ -29,9 +35,15 @@ print(paste("2020-03-10 movements (inter-province):", round(sum(E(graph_mid_inte
 print(paste("2020-05-05 movements (inter-province):", round(sum(E(graph_post_inter)$weight))))
 
 par(mfrow=c(1,3))
-igraph::plot.igraph(graph_pre_inter, vertex.size=5, edge.width=plot_size(graph_pre_inter,3), edge.lty=c("dotted"),  edge.arrow.size=0.02)
-igraph::plot.igraph(graph_mid_inter, vertex.size=5, edge.width=plot_size(graph_mid_inter,3), edge.lty=c("dotted"),  edge.arrow.size=0.02)
-igraph::plot.igraph(graph_post_inter, vertex.size=5, edge.width=plot_size(graph_post_inter,3), edge.lty=c("dotted"),  edge.arrow.size=0.02)
+igraph::plot.igraph(graph_pre_inter, vertex.size=plot_size(graph_pre_inter, V(graph_pre_inter)$in_strength, 1, min=3), 
+                    edge.width=plot_size(graph_pre_inter, E(graph_pre_inter)$weight, 3), 
+                    edge.lty=c("dotted"),  edge.arrow.size=0.02)
+igraph::plot.igraph(graph_mid_inter, vertex.size=plot_size(graph_mid_inter, V(graph_mid_inter)$in_strength, 1, min=3), 
+                    edge.width=plot_size(graph_mid_inter, E(graph_mid_inter)$weight, 3), 
+                    edge.lty=c("dotted"),  edge.arrow.size=0.02)
+igraph::plot.igraph(graph_post_inter, vertex.size=plot_size(graph_post_inter, V(graph_post_inter)$in_strength, 1, min=3), 
+                    edge.width=plot_size(graph_post_inter, E(graph_post_inter)$weight, 3), 
+                    edge.lty=c("dotted"),  edge.arrow.size=0.02)
 
 # Visualize movements in one or more regions
 regions <- c("Friuli-Venezia Giulia", "Trentino-South Tyrol", "Veneto")
@@ -42,9 +54,15 @@ graph_pre_local$layout <- cbind(V(graph_pre_local)$x, V(graph_pre_local)$y)
 graph_mid_local$layout <- cbind(V(graph_mid_local)$x, V(graph_mid_local)$y)
 graph_post_local$layout <- cbind(V(graph_post_local)$x, V(graph_post_local)$y)
 par(mfrow=c(1,3))
-plot(graph_pre_local, vertex.size=10, edge.width=plot_size(graph_pre_local,3),edge.lty=c("dotted"),  edge.arrow.size=0.1)
-plot(graph_mid_local, vertex.size=10, edge.width=plot_size(graph_mid_local,3),edge.lty=c("dotted"),  edge.arrow.size=0.1)
-plot(graph_post_local, vertex.size=10, edge.width=plot_size(graph_post_local,3),edge.lty=c("dotted"),  edge.arrow.size=0.1)
+plot(graph_pre_local, vertex.size=plot_size(graph_pre_local, V(graph_pre_local)$in_strength, 0.5, min=3), 
+     edge.width=plot_size(graph_pre_local, E(graph_pre_local)$weight, 3), 
+     edge.lty=c("dotted"),  edge.arrow.size=0.1)
+plot(graph_mid_local, vertex.size=plot_size(graph_mid_local, V(graph_mid_local)$in_strength, 0.5, min=3), 
+     edge.width=plot_size(graph_mid_local, E(graph_mid_local)$weight, 3), 
+     edge.lty=c("dotted"),  edge.arrow.size=0.1)
+plot(graph_post_local, vertex.size=plot_size(graph_post_local, V(graph_post_local)$in_strength, 0.5, min=3), 
+     edge.width=plot_size(graph_post_local, E(graph_post_local)$weight, 3), 
+     edge.lty=c("dotted"),  edge.arrow.size=0.1)
 
 # Egocentric network of a region
 regions <- c("Lombardy")
@@ -55,6 +73,12 @@ graph_pre_local$layout <- cbind(V(graph_pre_local)$x, V(graph_pre_local)$y)
 graph_mid_local$layout <- cbind(V(graph_mid_local)$x, V(graph_mid_local)$y)
 graph_post_local$layout <- cbind(V(graph_post_local)$x, V(graph_post_local)$y)
 par(mfrow=c(1,3))
-plot(graph_pre_local, vertex.size=10, edge.width=plot_size(graph_pre_local,3),edge.lty=c("dotted"),  edge.arrow.size=0.1)
-plot(graph_mid_local, vertex.size=10, edge.width=plot_size(graph_mid_local,3),edge.lty=c("dotted"),  edge.arrow.size=0.1)
-plot(graph_post_local, vertex.size=10, edge.width=plot_size(graph_post_local,3),edge.lty=c("dotted"),  edge.arrow.size=0.1)
+plot(graph_pre_local, vertex.size=plot_size(graph_pre_local, V(graph_pre_local)$in_strength, 0.5, min=3),
+     edge.width=plot_size(graph_pre_local, E(graph_pre_local)$weight, 3), 
+     edge.lty=c("dotted"),  edge.arrow.size=0.1)
+plot(graph_mid_local, vertex.size=plot_size(graph_mid_local, V(graph_mid_local)$in_strength, 0.5, min=3),
+     edge.width=plot_size(graph_mid_local, E(graph_mid_local)$weight, 3), 
+     edge.lty=c("dotted"),  edge.arrow.size=0.1)
+plot(graph_post_local, vertex.size=plot_size(graph_post_local, V(graph_post_local)$in_strength, 0.5, min=3),
+     edge.width=plot_size(graph_post_local, E(graph_post_local)$weight, 3), 
+     edge.lty=c("dotted"),  edge.arrow.size=0.1)
