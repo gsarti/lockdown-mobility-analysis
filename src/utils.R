@@ -62,6 +62,18 @@ create_graph_from_data <- function(dataframe, metric="n", loops=T, zeros = T) {
   return(g)
 }
 
+get_subgraph <- function(g, ids, type="vertex") {
+  if(type == "vertex") {
+    subg <- igraph::induced.subgraph(g, vids=ids)
+  }
+  else if (type == "edge") {
+    subg <- igraph::subgraph.edges(g, eids=ids, delete.vertices=T)
+  }
+  else {print("Error, type should be either vertex or edge")}
+  subg$layout <- cbind(V(subg)$x, V(subg)$y)
+  return(subg)
+}
+
 # Inspired by: 
 # https://medium.com/@infinex/visualisation-of-airport-connectivities-in-r-using-ggmap-ggplot-igraph-d26af3267ca1
 plot_graph_on_map <- function(g, map) {
