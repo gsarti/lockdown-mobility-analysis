@@ -12,6 +12,11 @@ plot_attr_hist <- function(pre, mid, post, attr, xlab, type="vertex", breaks=15,
     mid_attr <- edge_attr(mid, attr)
     post_attr <- edge_attr(post, attr)
   }
+  else if(type == "degree"){
+    pre_attr <- pre
+    mid_attr <- mid
+    post_attr <- post
+  }
   else {print("Error, type should be either vertex or edge")}
   hist(pre_attr, xlab = xlab, ylab="# of Provinces", main = "Mobility pre lockdown", breaks=breaks)
   hist(mid_attr, xlab = xlab, ylab="# of Provinces", main = "Mobility mid lockdown", breaks=breaks)
@@ -49,6 +54,36 @@ plot_weighted_graph <- function(pre, mid, post, v_scale = 1, v_min = 3, e_scale 
   igraph::plot.igraph(post, vertex.size=plot_size(post, V(post)$in_strength, v_scale, v_min), 
                       edge.width=plot_size(post, E(post)$weight, e_scale, e_min), 
                       main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
+  print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
+}
+
+plot_centrality_graph <- function(pre, mid, post, ci_pre,ci_mid,ci_post, v_scale = 1, v_min = 3, e_scale = 1, e_min = 0, mfrow=c(1,1), ...) {
+  par(mfrow=mfrow)
+  igraph::plot.igraph(pre, vertex.size=plot_size(pre, ci_pre, v_scale, v_min), 
+                      edge.width=plot_size(pre, E(pre)$weight, e_scale, e_min), 
+                      main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02, ...)
+  igraph::plot.igraph(mid, vertex.size=plot_size(mid, ci_mid, v_scale, v_min), 
+                      edge.width=plot_size(mid, E(mid)$weight, e_scale, e_min), 
+                      main="Mobility mid", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
+  igraph::plot.igraph(post, vertex.size=plot_size(post, ci_post, v_scale, v_min), 
+                      edge.width=plot_size(post, E(post)$weight, e_scale, e_min), 
+                      main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
+  print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
+}
+plot_clique_graph <- function(pre, mid, post, vcol1,vcol2,vcol3, v_scale = 1, v_min = 3, e_scale = 1, e_min = 0, mfrow=c(1,1), ...) {
+  par(mfrow=mfrow)
+  igraph::plot.igraph(pre, vertex.size=plot_size(pre, V(pre)$in_strength, v_scale, v_min), 
+                      edge.width=plot_size(pre, E(pre)$weight, e_scale, e_min), 
+                      main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02,
+                      vertex.color=vcol1, ...)
+  igraph::plot.igraph(mid, vertex.size=plot_size(mid, V(mid)$in_strength, v_scale, v_min), 
+                      edge.width=plot_size(mid, E(mid)$weight, e_scale, e_min), 
+                      main="Mobility mid", edge.lty=c("dotted"),  edge.arrow.size=0.02,
+                      vertex.color=vcol2,...)
+  igraph::plot.igraph(post, vertex.size=plot_size(post, V(post)$in_strength, v_scale, v_min), 
+                      edge.width=plot_size(post, E(post)$weight, e_scale, e_min), 
+                      main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02,
+                      vertex.color=vcol3, ...)
   print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
 }
 
