@@ -33,18 +33,17 @@ Taken from Moodle:
 ### 1
 
 - [x] Review techniques of descriptive analysis presented during the course
-- [ ] Select a metric to weight edges among those available
-- [ ] Perform descriptive analysis of the 3 networks in an R script
+- [x] Select a metric to weight edges among those available
+- [x] Perform descriptive analysis of the 3 networks in an R script
 - [ ] Write report section comparing similarities and differences in the analysis
 - [ ] Add comments to the script
 
 ### 2
 
-- [ ] Review techniques of exploratory analysis for community detection
+- [x] Review techniques of exploratory analysis for community detection
 - [ ] Perform community detection for the 3 networks in an R script
 - [ ] Write report section highlighting relevant communities and techniques used
 - [ ] Add comments to the script
-- [ ] *If time allows*: Try both block modeling and community detection
 
 ### 3
 

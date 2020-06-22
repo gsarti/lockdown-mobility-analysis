@@ -11,6 +11,12 @@ graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F
 graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
 graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
 
+ # ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS
+ # 
+ # graph_pre <- create_graph_from_data(mobility_pre, metric="n", zeros = F)
+ # graph_mid <- create_graph_from_data(mobility_mid, metric="n", zeros = F)
+ # graph_post <- create_graph_from_data(mobility_post, metric="n", zeros = F)
+
 # Degree centrality for the 3 graphs
 
 V(graph_pre)$deg <- igraph::degree(graph_pre) 
@@ -127,6 +133,25 @@ cat(sprintf("Network transitivity by degree pre-lockdown: %f,\nNetwork transitiv
             tran_sub_pre_kcore,tran_sub_mid_kcore,tran_sub_post_kcore))
 
 
+# Check if the general networks are strongly or weakly connected
+igraph::is.connected(graph_pre, mode = "strong")
+igraph::is.connected(graph_mid, mode = "strong")
+igraph::is.connected(graph_post, mode = "strong")
+
+igraph::is.connected(graph_pre,mode = "weak")
+igraph::is.connected(graph_mid,mode = "weak")
+igraph::is.connected(graph_post,mode = "weak")
+
+
+# Check if the subgraphs of the netowrks based on weights are strongly or weakly connected
+igraph::is.connected(sub_pre_weight_up, mode = "strong")
+igraph::is.connected(sub_mid_weight_up, mode = "strong")
+igraph::is.connected(sub_post_weight_up, mode = "strong")
+
+igraph::is.connected(sub_pre_weight_up,mode = "weak")
+igraph::is.connected(sub_mid_weight_up,mode = "weak")
+igraph::is.connected(sub_post_weight_up,mode = "weak")
+
 # Connected components in subgraphs where weights are above the threshold
 igraph::components(sub_pre_weight_up, mode = "weak")
 igraph::components(sub_mid_weight_up, mode = "weak")
@@ -209,5 +234,4 @@ plot_clique_graph(graph_pre, graph_mid, graph_post, vcols, mfrow = c(1,3), e_sca
 #                    edge.width=plot_size(graph_mid, E(graph_pre)$weight, 5))
 #igraph::plot.igraph(graph_post, vertex.size=cls_post*1500,edge.arrow.size=0.02,
 #                    edge.width=plot_size(graph_post, E(graph_pre)$weight, 5))
-
 

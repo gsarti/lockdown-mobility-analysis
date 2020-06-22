@@ -41,35 +41,13 @@ plot_attr_hist(graph_pre, graph_mid, graph_post, 'wcore', "Weighted Coreness")
 # The network is basically a single giant component
 
 
-# We filter out nodes with weighted coreness rank = 2, a.k.a. with less than 1000 raw inter-province movements (for inter-province graph)
-# and with less than 20'000 total movements (for the all graph).
+# We filter out nodes with weighted coreness rank = 2, a.k.a. with less than 1000 raw inter-province movements 
+# (for inter-province graph)
 n_filter <- 2
-wcore_pre <- induced.subgraph(graph_pre,vids=which(V(graph_pre)$wcore > n_filter))
-wcore_mid <- induced.subgraph(graph_mid,vids=which(V(graph_mid)$wcore > n_filter))
-wcore_post <- induced.subgraph(graph_post,vids=which(V(graph_post)$wcore > n_filter))
-wcore_pre$layout <- cbind(V(wcore_pre)$x, V(wcore_pre)$y)
-wcore_mid$layout <- cbind(V(wcore_mid)$x, V(wcore_mid)$y)
-wcore_post$layout <- cbind(V(wcore_post)$x, V(wcore_post)$y)
+wcore_pre <- get_subgraph(graph_pre, ids=which(V(graph_pre)$wcore > n_filter), type="vertex")
+wcore_mid <- get_subgraph(graph_mid, ids=which(V(graph_mid)$wcore > n_filter), type="vertex")
+wcore_post <- get_subgraph(graph_post, ids=which(V(graph_post)$wcore > n_filter), type="vertex")
 
-print(paste("2020-02-25 components (after filtering):", tail(unique(igraph::components(wcore_pre)$membership),1)))
-print(paste("2020-03-10 components (after filtering):", tail(unique(igraph::components(wcore_mid)$membership),1)))
-print(paste("2020-05-05 components (after filtering):", tail(unique(igraph::components(wcore_post)$membership),1)))
-par(mfrow=c(1,1))
-plot(wcore_pre, vertex.size=6, edge.arrow.size=0.05, vertex.color=igraph::components(wcore_pre)$membership)
-plot(wcore_mid, vertex.size=6, edge.arrow.size=0.05, vertex.color=igraph::components(wcore_mid)$membership)
-plot(wcore_post, vertex.size=6, edge.arrow.size=0.05, vertex.color=igraph::components(wcore_post)$membership)
+plot_components(wcore_pre, wcore_mid, wcore_post, e_scale=2)
 
-wcore_pre_all <- induced.subgraph(graph_pre,vids=which(V(graph_pre)$wcore > n_filter))
-wcore_mid_all <- induced.subgraph(graph_mid,vids=which(V(graph_mid)$wcore > n_filter))
-wcore_post_all <- induced.subgraph(graph_post,vids=which(V(graph_post)$wcore > n_filter))
-wcore_pre_all$layout <- cbind(V(wcore_pre_all)$x, V(wcore_pre_all)$y)
-wcore_mid_all$layout <- cbind(V(wcore_mid_all)$x, V(wcore_mid_all)$y)
-wcore_post_all$layout <- cbind(V(wcore_post_all)$x, V(wcore_post_all)$y)
 
-print(paste("2020-02-25 components (after filtering):", tail(unique(igraph::components(wcore_pre)$membership),1)))
-print(paste("2020-03-10 components (after filtering):", tail(unique(igraph::components(wcore_mid)$membership),1)))
-print(paste("2020-05-05 components (after filtering):", tail(unique(igraph::components(wcore_post)$membership),1)))
-par(mfrow=c(1,1))
-plot(wcore_pre, vertex.size=6, edge.arrow.size=0.05, vertex.color=igraph::components(wcore_pre)$membership)
-plot(wcore_mid, vertex.size=6, edge.arrow.size=0.05, vertex.color=igraph::components(wcore_mid)$membership)
-plot(wcore_post, vertex.size=6, edge.arrow.size=0.05, vertex.color=igraph::components(wcore_post)$membership)

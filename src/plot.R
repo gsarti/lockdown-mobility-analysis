@@ -57,7 +57,7 @@ plot_weighted_graph <- function(pre, mid, post, v_attr="in_strength", e_attr="we
   print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
 }
 
-plot_clique_graph <- function(pre, mid, post, vcols, mfrow=c(1,1), ...) {
+plot_community_graph <- function(pre, mid, post, vcols, mfrow=c(1,1), ...) {
   par(mfrow=mfrow)
   plot_single_weighted_graph(pre, main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02, vertex.color=vcols[[1]], ...)
   plot_single_weighted_graph(mid, main="Mobility mid", edge.lty=c("dotted"), edge.arrow.size=0.02, vertex.color=vcols[[2]], ...)
@@ -82,11 +82,9 @@ plot_components <- function(pre, mid, post, mfrow=c(1,1), ...) {
   pre_member <- igraph::components(pre)$membership
   mid_member <- igraph::components(mid)$membership
   post_member <- igraph::components(post)$membership
-  print(paste("Pre components:", tail(unique(pre_member),1)))
-  print(paste("Mid components:", tail(unique(mid_member),1)))
-  print(paste("Post components:", tail(unique(post_member),1)))
-  plot(pre, vertex.color=pre_member, ...)
-  plot(mid, vertex.color=mid_member, ...)
-  plot(post, vertex.color=post_member, ...)
-  print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
+  print(paste("Components: Pre", tail(unique(pre_member),1), 
+              " -> Mid", tail(unique(mid_member),1), 
+              " -> Post", tail(unique(post_member),1)))
+  vcols <- list(pre_member, mid_member, post_member)
+  plot_community_graph(pre, mid, post, vcols, mfrow, vertex.size=6, edge.arrow.size=0.05, ...)
 }
