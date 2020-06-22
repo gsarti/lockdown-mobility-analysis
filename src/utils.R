@@ -74,6 +74,17 @@ get_subgraph <- function(g, ids, type="vertex") {
   return(subg)
 }
 
+get_attr <- function(g, attr, type) {
+  res <- NULL
+  if(type == "vertex") {
+    res <- vertex_attr(g, attr)
+  }
+  else if (type == "edge") {
+    res <- edge_attr(g, attr)
+  }
+  return(res)
+}
+
 # Inspired by: 
 # https://medium.com/@infinex/visualisation-of-airport-connectivities-in-r-using-ggmap-ggplot-igraph-d26af3267ca1
 plot_graph_on_map <- function(g, map) {

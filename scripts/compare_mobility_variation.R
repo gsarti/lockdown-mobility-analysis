@@ -38,3 +38,4 @@ plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, region
 # Egocentric network of a region (inbound)
 plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,1),
                       egonet=T, ego_mode="inbound")
+

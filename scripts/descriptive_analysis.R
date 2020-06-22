@@ -13,27 +13,22 @@ graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros =
 
 # Degree centrality for the 3 graphs
 
-deg_pre <- igraph::degree(graph_pre) 
-ideg_pre <- igraph::degree(graph_pre, mode="in")   
-odeg_pre <- igraph::degree(graph_pre, mode="out")
+V(graph_pre)$deg <- igraph::degree(graph_pre) 
+V(graph_pre)$ideg <- igraph::degree(graph_pre, mode="in")   
+V(graph_pre)$odeg <- igraph::degree(graph_pre, mode="out")
 
-deg_mid <- igraph::degree(graph_mid) 
-ideg_mid <- igraph::degree(graph_mid, mode="in") 
-odeg_mid <- igraph::degree(graph_mid, mode="out")
+V(graph_mid)$deg <- igraph::degree(graph_mid) 
+V(graph_mid)$ideg <- igraph::degree(graph_mid, mode="in") 
+V(graph_mid)$odeg <- igraph::degree(graph_mid, mode="out")
 
-deg_post <- igraph::degree(graph_post) 
-ideg_post <- igraph::degree(graph_post, mode="in") 
-odeg_post <- igraph::degree(graph_post, mode="out")
+V(graph_post)$deg <- igraph::degree(graph_post) 
+V(graph_post)$ideg <- igraph::degree(graph_post, mode="in") 
+V(graph_post)$odeg <- igraph::degree(graph_post, mode="out")
 
-# Degree distribution
-plot_attr_hist(deg_pre, deg_mid, deg_post,attr = NULL, xlab ="Degree distribution",type = "degree", mfrow = c(1,3))
-
-# In-degree distribution
-plot_attr_hist(ideg_pre, ideg_mid, ideg_post,attr = NULL, xlab ="In-Degree distribution",type = "degree", mfrow = c(1,3))
-
-# Out-degree distribution
-plot_attr_hist(odeg_pre, odeg_mid, odeg_post,attr = NULL, xlab ="Out-Degree distribution",type = "degree", mfrow = c(1,3))
-
+# Degree/In/Out distributions
+plot_attr_hist(graph_pre, graph_mid, graph_post, attr="deg", xlab ="Degree distribution", type="vertex", mfrow=c(1,3))
+plot_attr_hist(graph_pre, graph_mid, graph_post, attr="ideg", xlab ="In-Degree distribution", type="vertex", mfrow=c(1,3))
+plot_attr_hist(graph_pre, graph_mid, graph_post, attr="odeg", xlab ="Out-Degree distribution", type="vertex", mfrow=c(1,3))
 
 # Densities for the 3 graphs
 denisty_pre <- igraph::edge_density(graph_pre, loops = FALSE)
@@ -68,13 +63,13 @@ eig_post <- igraph::eigen_centrality(graph_post, weights =  E(graph_post)$invert
 
 
 # Graphical representation where the size of each vertex is proportional to betweenness
-plot_centrality_graph(graph_pre,graph_mid,graph_post, ci_pre = btn_pre, ci_mid = btn_mid, ci_post = btn_post,
-                       mfrow = c(1,3),e_scale = 2,v_scale = 0.8)
+v_attrs <- list(btn_pre, btn_mid, btn_post)
+plot_weighted_graph(graph_pre, graph_mid, graph_post,  v_attr=v_attrs, mfrow = c(1,3), e_scale = 2, v_scale = 0.8)
 
 # Graphical representation of the graphs where the size of each vertex is proportional
 # to eigenvector centrality
-plot_centrality_graph(graph_pre,graph_mid,graph_post, ci_pre = eig_pre$vector*100, ci_mid = eig_mid$vector*100, 
-                      ci_post = eig_post$vector*100, mfrow = c(1,3),e_scale = 2,v_scale = 0.4)
+v_attrs <- list(eig_pre$vector*100, eig_mid$vector*100, eig_post$vector*100)
+plot_weighted_graph(graph_pre, graph_mid, graph_post, v_attr=v_attrs, mfrow = c(1,3), e_scale = 2, v_scale = 0.4)
 
 # Assortativity
 assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
@@ -84,8 +79,7 @@ cat(sprintf("Network assortativity by degree pre-lockdown: %f,\nNetwork assortat
             assort_pre,assort_mid,assort_post))
 
 # Weight distribution
-plot_attr_hist(graph_pre, graph_mid, graph_post,attr = "weight",type = "edge", 
-               mfrow = c(1,3),xlab = "Edge weights")
+plot_attr_hist(graph_pre, graph_mid, graph_post, attr = "weight", type = "edge", mfrow = c(1,3), xlab = "Edge weights")
 
 # Set a threshold of weights to inspect transitivity to all the selected nodes
 w_threshold <- 500
@@ -152,8 +146,8 @@ vcol2 <- rep("grey80", vcount(graph_mid))
 vcol2[unlist(cliques_mid)] <- "gold"
 vcol3 <- rep("grey80", vcount(graph_post))
 vcol3[unlist(cliques_post)] <- "gold"
-plot_clique_graph(graph_pre,graph_mid,graph_post, vcol1, vcol2, vcol3,mfrow = c(1,3),e_scale = 2)
-
+vcols <- list(vcol1, vcol2, vcol3)
+plot_clique_graph(graph_pre, graph_mid, graph_post, vcols, mfrow = c(1,3), e_scale = 2)
 
 
 # ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS 

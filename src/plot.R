@@ -2,22 +2,9 @@ source('src/utils.R')
 
 plot_attr_hist <- function(pre, mid, post, attr, xlab, type="vertex", breaks=15, mfrow=c(1,1)) {
   par(mfrow=mfrow)
-  if(type == "vertex") {
-    pre_attr <- vertex_attr(pre, attr)
-    mid_attr <- vertex_attr(mid, attr)
-    post_attr <- vertex_attr(post, attr)
-  }
-  else if (type == "edge") {
-    pre_attr <- edge_attr(pre, attr)
-    mid_attr <- edge_attr(mid, attr)
-    post_attr <- edge_attr(post, attr)
-  }
-  else if(type == "degree"){
-    pre_attr <- pre
-    mid_attr <- mid
-    post_attr <- post
-  }
-  else {print("Error, type should be either vertex or edge")}
+  pre_attr <- get_attr(pre, attr, type)
+  mid_attr <- get_attr(mid, attr, type)
+  post_attr <- get_attr(post, attr, type)
   hist(pre_attr, xlab = xlab, ylab="# of Provinces", main = "Mobility pre lockdown", breaks=breaks)
   hist(mid_attr, xlab = xlab, ylab="# of Provinces", main = "Mobility mid lockdown", breaks=breaks)
   hist(post_attr, xlab = xlab, ylab="# of Provinces", main = "Mobility post lockdown", breaks=breaks)
@@ -43,47 +30,42 @@ plot_coreness <- function(pre, mid, post, coreness_func, coreness_param, attr_na
   print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
 }
 
-plot_weighted_graph <- function(pre, mid, post, v_scale = 1, v_min = 3, e_scale = 1, e_min = 0, mfrow=c(1,1), ...) {
+plot_single_weighted_graph <- function(g, v_attr="in_strength", e_attr="weight", 
+                                       v_scale=1, v_min=3, e_scale=1, e_min=0, ...) {
+  if(is.character(v_attr)) {
+    v_attr <- vertex_attr(g, v_attr)
+  }
+  if(is.character(e_attr)) {
+    e_attr <- edge_attr(g, e_attr)
+  }
+  igraph::plot.igraph(g, vertex.size=plot_size(g, v_attr, v_scale, v_min), 
+                      edge.width=plot_size(g, e_attr, e_scale, e_min), ...)
+}
+
+# v_attr/e_attr are either names of vertex/edge properties, or vectors of three variables each
+plot_weighted_graph <- function(pre, mid, post, v_attr="in_strength", e_attr="weight",
+                                v_scale = 1, v_min = 3, e_scale = 1, e_min = 0, mfrow=c(1,1), ...) {
   par(mfrow=mfrow)
-  igraph::plot.igraph(pre, vertex.size=plot_size(pre, V(pre)$in_strength, v_scale, v_min), 
-                      edge.width=plot_size(pre, E(pre)$weight, e_scale, e_min), 
+  if(is.character(v_attr)) {
+    v_attr <- list(v_attr, v_attr, v_attr)
+  }
+  if(is.character(e_attr)) {
+    e_attr <- list(e_attr, e_attr, e_attr)
+  }
+  plot_single_weighted_graph(pre, v_attr[[1]], e_attr[[1]], v_scale, v_min, e_scale, e_min, 
                       main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02, ...)
-  igraph::plot.igraph(mid, vertex.size=plot_size(mid, V(mid)$in_strength, v_scale, v_min), 
-                      edge.width=plot_size(mid, E(mid)$weight, e_scale, e_min), 
+  plot_single_weighted_graph(mid, v_attr[[2]], e_attr[[2]], v_scale, v_min, e_scale, e_min, 
                       main="Mobility mid", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
-  igraph::plot.igraph(post, vertex.size=plot_size(post, V(post)$in_strength, v_scale, v_min), 
-                      edge.width=plot_size(post, E(post)$weight, e_scale, e_min), 
+  plot_single_weighted_graph(post, v_attr[[3]], e_attr[[3]], v_scale, v_min, e_scale, e_min, 
                       main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
   print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
 }
 
-plot_centrality_graph <- function(pre, mid, post, ci_pre,ci_mid,ci_post, v_scale = 1, v_min = 3, e_scale = 1, e_min = 0, mfrow=c(1,1), ...) {
+plot_clique_graph <- function(pre, mid, post, vcols, mfrow=c(1,1), ...) {
   par(mfrow=mfrow)
-  igraph::plot.igraph(pre, vertex.size=plot_size(pre, ci_pre, v_scale, v_min), 
-                      edge.width=plot_size(pre, E(pre)$weight, e_scale, e_min), 
-                      main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02, ...)
-  igraph::plot.igraph(mid, vertex.size=plot_size(mid, ci_mid, v_scale, v_min), 
-                      edge.width=plot_size(mid, E(mid)$weight, e_scale, e_min), 
-                      main="Mobility mid", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
-  igraph::plot.igraph(post, vertex.size=plot_size(post, ci_post, v_scale, v_min), 
-                      edge.width=plot_size(post, E(post)$weight, e_scale, e_min), 
-                      main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
-  print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
-}
-plot_clique_graph <- function(pre, mid, post, vcol1,vcol2,vcol3, v_scale = 1, v_min = 3, e_scale = 1, e_min = 0, mfrow=c(1,1), ...) {
-  par(mfrow=mfrow)
-  igraph::plot.igraph(pre, vertex.size=plot_size(pre, V(pre)$in_strength, v_scale, v_min), 
-                      edge.width=plot_size(pre, E(pre)$weight, e_scale, e_min), 
-                      main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02,
-                      vertex.color=vcol1, ...)
-  igraph::plot.igraph(mid, vertex.size=plot_size(mid, V(mid)$in_strength, v_scale, v_min), 
-                      edge.width=plot_size(mid, E(mid)$weight, e_scale, e_min), 
-                      main="Mobility mid", edge.lty=c("dotted"),  edge.arrow.size=0.02,
-                      vertex.color=vcol2,...)
-  igraph::plot.igraph(post, vertex.size=plot_size(post, V(post)$in_strength, v_scale, v_min), 
-                      edge.width=plot_size(post, E(post)$weight, e_scale, e_min), 
-                      main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02,
-                      vertex.color=vcol3, ...)
+  plot_single_weighted_graph(pre, main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02, vertex.color=vcols[[1]], ...)
+  plot_single_weighted_graph(mid, main="Mobility mid", edge.lty=c("dotted"), edge.arrow.size=0.02, vertex.color=vcols[[2]], ...)
+  plot_single_weighted_graph(post, main="Mobility post", edge.lty=c("dotted"), edge.arrow.size=0.02, vertex.color=vcols[[3]], ...)
   print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
 }
 
