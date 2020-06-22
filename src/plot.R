@@ -88,3 +88,30 @@ plot_components <- function(pre, mid, post, mfrow=c(1,1), ...) {
   vcols <- list(pre_member, mid_member, post_member)
   plot_community_graph(pre, mid, post, vcols, mfrow, vertex.size=6, edge.arrow.size=0.05, ...)
 }
+
+plot_cliques <- function(pre, mid, post, mfrow=c(1,1), ...) {
+  par(mfrow=mfrow)
+  cliques_pre<- largest.cliques(pre)
+  cliques_mid <- largest.cliques(mid)
+  cliques_post <- largest.cliques(post)
+  print(paste("Cliques: Pre", length(cliques_pre), 
+              " -> Mid", length(cliques_mid), 
+              " -> Post", length(cliques_post)))
+  vcol1 <- rep("grey80", vcount(graph_pre))
+  vcol1[unlist(cliques_pre)] <- "gold"
+  vcol2 <- rep("grey80", vcount(graph_mid))
+  vcol2[unlist(cliques_mid)] <- "gold"
+  vcol3 <- rep("grey80", vcount(graph_post))
+  vcol3[unlist(cliques_post)] <- "gold"
+  vcols <- list(vcol1, vcol2, vcol3)
+  plot_community_graph(pre, mid, post, vcols, mfrow, edge.arrow.size=0.05, ...)
+}
+
+print_connectivity <- function(pre, mid, post) {
+  return(cat("Is the graph strongly connected? Pre", igraph::is.connected(graph_pre, mode = "strong"),
+      "-> Mid", igraph::is.connected(graph_mid, mode = "strong"),
+      "-> Post", igraph::is.connected(graph_post, mode = "strong"),
+      "\nIs the graph weakly connected? Pre", igraph::is.connected(graph_pre, mode = "weak"),
+      "-> Mid", igraph::is.connected(graph_mid, mode = "weak"),
+      "-> Post", igraph::is.connected(graph_post, mode = "weak")))
+}

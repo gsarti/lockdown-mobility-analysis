@@ -5,17 +5,42 @@ mobility_pre <- read.csv('data/2020-02-25.csv',sep=";")
 mobility_mid <- read.csv('data/2020-03-10.csv',sep=";")
 mobility_post <- read.csv('data/2020-05-05.csv',sep=";")
 
-### MOBILITY WITHOUT INTRA-PROVINCES MOVEMENTS
+# Mobility doesn't change much intra-provincially...
+graph_pre_all <- create_graph_from_data(mobility_pre, metric="n", zeros = F)
+graph_mid_all <- create_graph_from_data(mobility_mid, metric="n", zeros = F)
+graph_post_all <- create_graph_from_data(mobility_post, metric="n", zeros = F)
 
-graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
-graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
-graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
+print(paste("Movements (all): Pre", round(sum(E(graph_pre_all)$weight)), " -> Mid", 
+            round(sum(E(graph_mid_all)$weight)), " -> Post", round(sum(E(graph_post_all)$weight))))
 
- # ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS
- # 
- # graph_pre <- create_graph_from_data(mobility_pre, metric="n", zeros = F)
- # graph_mid <- create_graph_from_data(mobility_mid, metric="n", zeros = F)
- # graph_post <- create_graph_from_data(mobility_post, metric="n", zeros = F)
+# Inter-province connections are present but invisible since their value is much lower than intra-province ones
+plot_weighted_graph(graph_pre_all, graph_mid_all, graph_post_all, v_scale=1.5, v_min=3, e_scale=4)
+
+# ... but is significantly lower inter-provincially
+graph_pre_inter <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
+graph_mid_inter <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
+graph_post_inter <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
+
+print(paste("Movements (inter-province): Pre", round(sum(E(graph_pre_inter)$weight)), " -> Mid", 
+            round(sum(E(graph_mid_inter)$weight)), " -> Post", round(sum(E(graph_post_inter)$weight))))
+
+# Now we can see inter-province movements
+plot_weighted_graph(graph_pre_inter, graph_mid_inter, graph_post_inter, v_scale=1, v_min=3, e_scale=3)
+
+# Visualize movements in one or more regions
+regions <- c("Friuli-Venezia Giulia", "Trentino-South Tyrol", "Veneto")
+plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,3))
+
+# Egocentric network of a region (outbound)
+regions <- c("Lombardy")
+plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,1),
+                      egonet=T, ego_mode="outbound")
+# Egocentric network of a region (inbound)
+plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,1),
+                      egonet=T, ego_mode="inbound")
+
+# For the analysis we restrict ourselves to inter-province movments since
+# results for the descriptive analysis are empirically quite similar.
 
 # Degree centrality for the 3 graphs
 
@@ -43,7 +68,6 @@ denisty_post <- igraph::edge_density(graph_post, loops = FALSE)
 
 cat(sprintf("Network density pre-lockdown: %f,\nNetwork density mid-lockdown: %f,\nNetwork density post-lockdown: %f\n", 
             denisty_pre,density_mid,denisty_post))
-
 
 # Centrality indexes
 
@@ -157,81 +181,4 @@ igraph::components(sub_pre_weight_up, mode = "weak")
 igraph::components(sub_mid_weight_up, mode = "weak")
 igraph::components(sub_post_weight_up, mode = "weak")
 
-
-
-# Largest cliques for the netowrks
-cliques_pre<- largest.cliques(graph_pre)
-cliques_mid <- largest_cliques(graph_mid)
-cliques_post <- largest_cliques(graph_post)
-
-# Plot of these cliques
-vcol1 <- rep("grey80", vcount(graph_pre))
-vcol1[unlist(cliques_pre)] <- "gold"
-vcol2 <- rep("grey80", vcount(graph_mid))
-vcol2[unlist(cliques_mid)] <- "gold"
-vcol3 <- rep("grey80", vcount(graph_post))
-vcol3[unlist(cliques_post)] <- "gold"
-vcols <- list(vcol1, vcol2, vcol3)
-plot_clique_graph(graph_pre, graph_mid, graph_post, vcols, mfrow = c(1,3), e_scale = 2)
-
-
-# ### MOBILITY WITH INTRA-PROVINCES MOVEMENTS 
-
-# graph_pre <- create_graph_from_data(mobility_pre, metric="n", zeros = F)
-# graph_mid <- create_graph_from_data(mobility_mid, metric="n", zeros = F)
-# graph_post <- create_graph_from_data(mobility_post, metric="n", zeros = F)
-# 
-# # degree centrality
-# deg_pre <- igraph::degree(graph_pre) 
-# ideg_pre <- igraph::degree(graph_pre, mode="in") 
-# odeg_pre <- igraph::degree(graph_pre, mode="out")
-# 
-# deg_mid <- igraph::degree(graph_mid) # Default: total degree
-# ideg_mid <- igraph::degree(graph_mid, mode="in") 
-# odeg_mid <- igraph::degree(graph_mid, mode="out")
-# 
-# deg_post <- igraph::degree(graph_post) # Default: total degree
-# ideg_post <- igraph::degree(graph_post, mode="in") 
-# odeg_post <- igraph::degree(graph_post, mode="out")
-# 
-# par(mfrow=c(1,1))
-# plot(ideg_pre, odeg_pre, type="n", xlab="inDegree (popularity)", ylab="outDegree (activity)") # Plot ideg by odeg
-# abline(0, 1, lty=3)
-# text(jitter(ideg_pre), jitter(ideg_pre), igraph::vertex_attr(graph_pre, "name"), cex=0.75, col=2)
-# 
-# par(mfrow=c(1,3))
-# hist(ideg_pre, xlab="degree", main="Mobility pre lockdown in-degree distribution", prob=TRUE)
-# hist(ideg_mid, xlab="degree", main="Mobility mid lockdown in-degree distribution", prob=TRUE)
-# hist(ideg_post, xlab="degree", main="Mobility post lockdown in-degree distribution", prob=TRUE)
-# 
-# hist(odeg_pre, xlab="degree", main="Mobility pre lockdown out-degree distribution", prob=TRUE)
-# hist(odeg_mid, xlab="degree", main="Mobility mid lockdown out-degree distribution", prob=TRUE)
-# hist(odeg_post, xlab="degree", main="Mobility post lockdown out-degree distribution", prob=TRUE)
-# 
-# denisty_pre <- igraph::edge_density(graph_pre)
-# density_mid <- igraph::edge_density(graph_mid)
-# denisty_post <- igraph::edge_density(graph_post)
-# 
-# cat(sprintf("Nertwork density pre-lockdown: %f,\nNertwork density mid-lockdown: %f,\nNertwork density post-lockdown: %f\n", 
-#             denisty_pre,density_mid,denisty_post))
-# 
-# btn_pre <- igraph::betweenness(graph_pre)
-# btn_mid <- igraph::betweenness(graph_mid)
-# btn_post <- igraph::betweenness(graph_post)
-# 
-# cls_pre <- igraph::closeness(graph_pre)
-# cls_mid <- igraph::closeness(graph_mid)
-# cls_post <- igraph::closeness(graph_post)
-# 
-# eig_pre <- igraph::eigen_centrality(graph_pre)
-# eig_mid <- igraph::eigen_centrality(graph_mid)
-# eig_post <- igraph::eigen_centrality(graph_post)
-# 
-# par(mfrow=c(1,3))
-#igraph::plot.igraph(graph_pre, vertex.size=cls_pre*1500,edge.arrow.size=0.02,
-#                    edge.width=plot_size(graph_pre, E(graph_pre)$weight, 5))
-#igraph::plot.igraph(graph_mid, vertex.size=cls_mid*1500,edge.arrow.size=0.02,
-#                    edge.width=plot_size(graph_mid, E(graph_pre)$weight, 5))
-#igraph::plot.igraph(graph_post, vertex.size=cls_post*1500,edge.arrow.size=0.02,
-#                    edge.width=plot_size(graph_post, E(graph_pre)$weight, 5))
 
