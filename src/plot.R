@@ -115,3 +115,96 @@ print_connectivity <- function(pre, mid, post) {
       "-> Mid", igraph::is.connected(graph_mid, mode = "weak"),
       "-> Post", igraph::is.connected(graph_post, mode = "weak")))
 }
+
+print_community_detection_metrics <- function(pre, mid, post, comm_pre, comm_mid, comm_post, gini_attr="region") {
+  V(pre)$member <- membership(comm_pre)
+  V(mid)$member <- membership(comm_mid)
+  V(post)$member <- membership(comm_post)
+  print(paste("# Communities : Pre", max(unique(comm_pre$membership)), " -> Mid", 
+              max(unique(comm_mid$membership)), " -> Post", max(unique(comm_post$membership))))
+  print(paste("Modularity: Pre", modularity(pre, membership(comm_pre)), " -> Mid", 
+              modularity(mid, membership(comm_mid)), " -> Post", modularity(post, membership(comm_post))))
+  pre_icd <- sapply(unique(membership(comm_pre)), function(x){round(intra_clust_density(pre, comm_pre, x),3)})
+  mid_icd <- sapply(unique(membership(comm_mid)), function(x){round(intra_clust_density(mid, comm_mid, x),3)})
+  post_icd <- sapply(unique(membership(comm_post)), function(x){round(intra_clust_density(post, comm_post, x),3)})
+  print("Pre Intra-cluster Density:")
+  print(pre_icd)
+  print("Mid Intra-cluster Density:")
+  print(mid_icd)
+  print("Post Intra-cluster Density:")
+  print(post_icd)
+  pre_gini <- sapply(unique(membership(comm_pre)), function(x){round(gini_index(vertex_attr(pre, gini_attr)[V(pre)$member==x]),3)})
+  mid_gini <- sapply(unique(membership(comm_mid)), function(x){round(gini_index(vertex_attr(mid, gini_attr)[V(mid)$member==x]),3)})
+  post_gini <- sapply(unique(membership(comm_post)), function(x){round(gini_index(vertex_attr(post, gini_attr)[V(post)$member==x]),3)})
+  print("Pre Gini Index:")
+  print(pre_gini)
+  print("Mid Gini Index:")
+  print(mid_gini)
+  print("Post Gini Index:")
+  print(post_gini)
+}
+
+# Girvan-Newman Algorithm
+# Since edges are interpreted as distances instead of connection strengths, we follow an approach proposed in
+# literature and use the inverse of the weight to reflect "distance" as lower is better.
+plot_girvan_newman <- function(pre, mid, post, gini_attr="region", mfrow=c(1,1)) {
+  par(mfrow=mfrow)
+  E(pre)$inverted_weight <- (1/E(pre)$weight*10000) 
+  E(mid)$inverted_weight <- (1/E(mid)$weight*10000)
+  E(post)$inverted_weight <- (1/E(post)$weight*10000)
+  gn_comm_pre <- cluster_edge_betweenness(pre, weights=E(pre)$inverted_weight)
+  gn_comm_mid <- cluster_edge_betweenness(mid, weights=E(mid)$inverted_weight)
+  gn_comm_post <- cluster_edge_betweenness(post, weights=E(post)$inverted_weight)
+  print("== Girvan-Newman Community Detection ==")
+  print_community_detection_metrics(pre, mid, post, gn_comm_pre, gn_comm_mid, gn_comm_post, gini_attr)
+  colors <- rainbow(max(max(unique(gn_comm_pre$membership)), max(unique(gn_comm_mid$membership)), max(unique(gn_comm_post$membership))))
+  plot(gn_comm_pre, pre, vertex.size = 6, vertex.color=colors[membership(gn_comm_pre)], edge.width = 1,
+       edge.arrow.size=0.05, main="Girvan-Newman pre")
+  plot(gn_comm_mid, mid, vertex.size = 6, vertex.color=colors[membership(gn_comm_mid)], edge.width = 1,
+       edge.arrow.size=0.05, main="Girvan-Newman mid")
+  plot(gn_comm_post, post, vertex.size = 6, vertex.color=colors[membership(gn_comm_post)], edge.width = 1,
+       edge.arrow.size=0.05, main="Girvan-Newman post")
+  print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
+}
+
+# Label Propagation Algorithm
+# Here larger edges correspond to stronger connections, hence we can use weights
+plot_label_propagation <- function(pre, mid, post, gini_attr="region", mfrow=c(1,1)) {
+  par(mfrow=mfrow)
+  lp_comm_pre <- cluster_label_prop(pre, weights=E(pre)$weight)
+  lp_comm_mid <- cluster_label_prop(mid, weights=E(mid)$weight)
+  lp_comm_post <- cluster_label_prop(post, weights=E(post)$weight)
+  print("== Label Propagation Community Detection ==")
+  print_community_detection_metrics(pre, mid, post, lp_comm_pre, lp_comm_mid, lp_comm_post, gini_attr)
+  colors <- rainbow(max(max(unique(lp_comm_pre$membership)), max(unique(gn_comm_mid$membership)), max(unique(gn_comm_post$membership))))
+  plot(lp_comm_pre, pre, vertex.size = 6, vertex.color=colors[membership(lp_comm_pre)], edge.width = 1,
+       edge.arrow.size=0.05, main="Label Propagation pre")
+  plot(lp_comm_mid, mid, vertex.size = 6, vertex.color=colors[membership(lp_comm_mid)], edge.width = 1,
+       edge.arrow.size=0.05, main="Label Propagation mid")
+  plot(lp_comm_post, post, vertex.size = 6, vertex.color=colors[membership(lp_comm_post)], edge.width = 1,
+       edge.arrow.size=0.05, main="Label Propagation post")
+  print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
+}
+
+# Girvan-Newman Algorithm
+# Since edges are interpreted as distances instead of connection strengths, we follow an approach proposed in
+# literature and use the inverse of the weight to reflect "distance" as lower is better.
+plot_girvan_newman <- function(pre, mid, post, gini_attr="region", mfrow=c(1,1)) {
+  par(mfrow=mfrow)
+  E(pre)$inverted_weight <- (1/E(pre)$weight*10000) 
+  E(mid)$inverted_weight <- (1/E(mid)$weight*10000)
+  E(post)$inverted_weight <- (1/E(post)$weight*10000)
+  gn_comm_pre <- cluster_edge_betweenness(pre, weights=E(pre)$inverted_weight)
+  gn_comm_mid <- cluster_edge_betweenness(mid, weights=E(mid)$inverted_weight)
+  gn_comm_post <- cluster_edge_betweenness(post, weights=E(post)$inverted_weight)
+  print("== Girvan-Newman Community Detection ==")
+  print_community_detection_metrics(pre, mid, post, gn_comm_pre, gn_comm_mid, gn_comm_post, gini_attr)
+  colors <- rainbow(max(max(unique(gn_comm_pre$membership)), max(unique(gn_comm_mid$membership)), max(unique(gn_comm_post$membership))))
+  plot(gn_comm_pre, pre, vertex.size = 6, vertex.color=colors[membership(gn_comm_pre)], edge.width = 1,
+       edge.arrow.size=0.05, main="Girvan-Newman pre")
+  plot(gn_comm_mid, mid, vertex.size = 6, vertex.color=colors[membership(gn_comm_mid)], edge.width = 1,
+       edge.arrow.size=0.05, main="Girvan-Newman mid")
+  plot(gn_comm_post, post, vertex.size = 6, vertex.color=colors[membership(gn_comm_post)], edge.width = 1,
+       edge.arrow.size=0.05, main="Girvan-Newman post")
+  print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
+}

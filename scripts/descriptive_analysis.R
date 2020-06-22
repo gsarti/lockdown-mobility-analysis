@@ -156,25 +156,13 @@ tran_sub_post_kcore <- transitivity(kcore_post, weights = NULL)
 cat(sprintf("Network transitivity by degree pre-lockdown: %f,\nNetwork transitivity by degree mid-lockdown: %f,\nNetwork transitivity by degree post-lockdown: %f\n", 
             tran_sub_pre_kcore,tran_sub_mid_kcore,tran_sub_post_kcore))
 
-
 # Check if the general networks are strongly or weakly connected
-igraph::is.connected(graph_pre, mode = "strong")
-igraph::is.connected(graph_mid, mode = "strong")
-igraph::is.connected(graph_post, mode = "strong")
-
-igraph::is.connected(graph_pre,mode = "weak")
-igraph::is.connected(graph_mid,mode = "weak")
-igraph::is.connected(graph_post,mode = "weak")
-
+print_connectivity(graph_pre, graph_mid, graph_post)
 
 # Check if the subgraphs of the netowrks based on weights are strongly or weakly connected
 igraph::is.connected(sub_pre_weight_up, mode = "strong")
 igraph::is.connected(sub_mid_weight_up, mode = "strong")
 igraph::is.connected(sub_post_weight_up, mode = "strong")
-
-igraph::is.connected(sub_pre_weight_up,mode = "weak")
-igraph::is.connected(sub_mid_weight_up,mode = "weak")
-igraph::is.connected(sub_post_weight_up,mode = "weak")
 
 # Connected components in subgraphs where weights are above the threshold
 igraph::components(sub_pre_weight_up, mode = "weak")

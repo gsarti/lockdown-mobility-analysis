@@ -37,8 +37,12 @@ plot_coreness(graph_pre_all, graph_mid_all, graph_post_all, weighted_coreness, c
 plot_attr_hist(graph_pre_all, graph_mid_all, graph_post_all, 'wcore', "Weighted Coreness")
 plot_attr_hist(graph_pre, graph_mid, graph_post, 'wcore', "Weighted Coreness")
 
-# The network is basically a single giant component
 # From now on, we limit ourselves to analyzing only the network without intra-province movements (no loops)
+
+# The network is basically a single giant component, with some exception
+igraph::groups(igraph::components(graph_pre))$`1`
+igraph::groups(igraph::components(graph_mid))$`1`
+igraph::groups(igraph::components(graph_post))$`1`
 
 # We filter out nodes with weighted coreness rank = 2, a.k.a. with less than 1000 raw inter-province movements 
 # (for inter-province graph)
@@ -53,13 +57,17 @@ plot_components(wcore_pre, wcore_mid, wcore_post, e_scale=2)
 # Results are very similar when highlighting existing cliques (especially in the mid case)
 plot_cliques(graph_pre, graph_mid, graph_post)
 
-# The graph isn't connected
+# The graph isn't connected since there are few provinces that are left disconnected after removing
+# 0-valued edges weighted with raw movements. We will discard those for our community detection analysis.
 print_connectivity(graph_pre, graph_mid, graph_post)
 
+gc_pre <- decompose(graph_pre, mode="weak")[[1]]
+gc_mid <- decompose(graph_mid, mode="weak")[[1]]
+gc_post <- decompose(graph_post, mode="weak")[[1]]
+gc_pre$layout <- cbind(V(gc_pre)$x, V(gc_pre)$y)
+gc_mid$layout <- cbind(V(gc_mid)$x, V(gc_mid)$y)
+gc_post$layout <- cbind(V(gc_post)$x, V(gc_post)$y)
 
-igraph::is.connected(graph_pre,mode = "weak")
-igraph::is.connected(graph_mid,mode = "weak")
-igraph::is.connected(graph_post,mode = "weak")
+plot_girvan_newman(gc_pre, gc_mid, gc_post, mfrow=c(1,3))
 
-
-
+plot_label_propagation(gc_pre, gc_mid, gc_post, mfrow=c(1,3))

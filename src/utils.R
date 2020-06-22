@@ -143,3 +143,13 @@ weighted_coreness <- function(g, bin_size) {
   }
   return(w_cores)
 }
+
+intra_clust_density <- function(g, comm, gg) {
+  subg <- induced.subgraph(g, which(membership(comm)==gg))
+  return(ecount(subg)/ecount(g))
+}
+
+gini_index <- function(x){
+  f <- table(x)/length(x)
+  sum(f^2)
+}
