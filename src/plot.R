@@ -43,8 +43,7 @@ plot_single_weighted_graph <- function(g, v_attr="in_strength", e_attr="weight",
 }
 
 # v_attr/e_attr are either names of vertex/edge properties, or vectors of three variables each
-plot_weighted_graph <- function(pre, mid, post, v_attr="in_strength", e_attr="weight",
-                                v_scale = 1, v_min = 3, e_scale = 1, e_min = 0, mfrow=c(1,1), ...) {
+plot_weighted_graph <- function(pre, mid, post, v_attr="in_strength", e_attr="weight", mfrow=c(1,1), ...) {
   par(mfrow=mfrow)
   if(is.character(v_attr)) {
     v_attr <- list(v_attr, v_attr, v_attr)
@@ -52,12 +51,9 @@ plot_weighted_graph <- function(pre, mid, post, v_attr="in_strength", e_attr="we
   if(is.character(e_attr)) {
     e_attr <- list(e_attr, e_attr, e_attr)
   }
-  plot_single_weighted_graph(pre, v_attr[[1]], e_attr[[1]], v_scale, v_min, e_scale, e_min, 
-                      main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02, ...)
-  plot_single_weighted_graph(mid, v_attr[[2]], e_attr[[2]], v_scale, v_min, e_scale, e_min, 
-                      main="Mobility mid", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
-  plot_single_weighted_graph(post, v_attr[[3]], e_attr[[3]], v_scale, v_min, e_scale, e_min, 
-                      main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
+  plot_single_weighted_graph(pre, v_attr[[1]], e_attr[[1]], main="Mobility pre", edge.lty=c("dotted"), edge.arrow.size=0.02, ...)
+  plot_single_weighted_graph(mid, v_attr[[2]], e_attr[[2]], main="Mobility mid", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
+  plot_single_weighted_graph(post, v_attr[[3]], e_attr[[3]], main="Mobility post", edge.lty=c("dotted"),  edge.arrow.size=0.02, ...)
   print(paste("Created plots of dim (",paste(mfrow,collapse=","),")"))
 }
 
