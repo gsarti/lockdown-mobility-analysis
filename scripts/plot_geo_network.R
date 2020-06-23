@@ -1,4 +1,5 @@
 source('src/utils.R')
+source('src/plot.R')
 
 # My Google API credentials
 register_google(key="AIzaSyAI883o1IDmjT8CWoSeT1EPN36Bk2sUxHs")

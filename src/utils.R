@@ -85,34 +85,6 @@ get_attr <- function(g, attr, type) {
   return(res)
 }
 
-# Inspired by: 
-# https://medium.com/@infinex/visualisation-of-airport-connectivities-in-r-using-ggmap-ggplot-igraph-d26af3267ca1
-plot_graph_on_map <- function(g, map) {
-  p <- ggmap(map)
-  plot_vector <- as.data.frame(cbind(V(g)$x, V(g)$y))
-  edgelist <- get.edgelist(g)
-  edgelist[,1]<-as.numeric(match(edgelist[,1],V(g)$name))
-  edgelist[,2]<-as.numeric(match(edgelist[,2],V(g)$name))
-  E(g)$color = lapply(list(E(g)), function(x){
-    w <- min(normalize_counts(x$weight, 20), 1)
-    ifelse(x$head_region == x$tail_region, rgb(0,0,0,w), rgb(1,0,0,w))
-  })
-  edges <- data.frame(plot_vector[edgelist[,1],],
-                      plot_vector[edgelist[,2],], E(g)$color)
-  colnames(edges) <- c("X1", "Y1", "X2", "Y2", "Color")
-  plot_vector$region <- as.factor(V(g)$region)
-  plot_vector$size <- unlist(lapply(V(g)$in_strength, function(x){max(log(x),3)}), use.names=FALSE)
-  p + geom_segment(aes(x=X1, y=Y1, xend = X2, yend = Y2), 
-                   data=edges, size = 0.7, colour=edges$Color) + 
-    geom_point(aes(V1, V2, colour=factor(region), size=size), data=plot_vector) + 
-    xlab('Longitude') + ylab('Latitude') +
-    theme(axis.title = element_blank(),
-          legend.position = "none",
-          axis.ticks = element_blank(),
-          axis.text = element_blank()
-    )
-}
-
 coreness_layout <- function(g, coreness_func, ...) {
   coreness <- coreness_func(g, ...);
   xy <- array(NA, dim=c(length(coreness), 2));
@@ -144,12 +116,35 @@ weighted_coreness <- function(g, bin_size) {
   return(w_cores)
 }
 
-intra_clust_density <- function(g, comm, gg) {
-  subg <- induced.subgraph(g, which(membership(comm)==gg))
-  return(ecount(subg)/ecount(g))
+apply_comm_func <- function(pre, mid, post, comm_pre, comm_mid, comm_post, func, name, ...) {
+  pre_vec <- sapply(unique(membership(comm_pre)), function(x){round(func(pre, comm_pre, x, ...),3)})
+  mid_vec <- sapply(unique(membership(comm_mid)), function(x){round(func(mid, comm_mid, x, ...),3)})
+  post_vec <- sapply(unique(membership(comm_post)), function(x){round(func(post, comm_post, x, ...),3)})
+  print(paste("Pre", name, ":"))
+  print(pre_vec)
+  print(paste("Mid", name, ":"))
+  print(mid_vec)
+  print(paste("Post", name, ":"))
+  print(post_vec)
 }
 
-gini_index <- function(x){
+
+intra_clust_density <- function(g, comm, gg) {
+  subg <- induced.subgraph(g, which(membership(comm)==gg))
+  d <- ecount(subg)/(vcount(subg) * (vcount(subg) - 1))
+  return(d)
+}
+
+inter_clust_density <- function(g, comm, gg) {
+  subg <- induced.subgraph(g, which(membership(comm)==gg))
+  n_inter_edges <- length(E(g)[V(g)[membership(comm)==gg] %--%
+                          V(g)[membership(comm)!=gg]])
+  d <- n_inter_edges/(vcount(subg) * (vcount(g) - vcount(subg)))
+  return(d)
+}
+
+gini_index <- function(g, comm=NULL, gg, attr){
+  x <- vertex_attr(g, attr)[V(g)$member==gg]
   f <- table(x)/length(x)
-  sum(f^2)
+  return(sum(f^2))
 }

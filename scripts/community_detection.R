@@ -68,6 +68,23 @@ gc_pre$layout <- cbind(V(gc_pre)$x, V(gc_pre)$y)
 gc_mid$layout <- cbind(V(gc_mid)$x, V(gc_mid)$y)
 gc_post$layout <- cbind(V(gc_post)$x, V(gc_post)$y)
 
-plot_girvan_newman(gc_pre, gc_mid, gc_post, mfrow=c(1,3))
+# Girvan-Newman Algorithm
+# Since edges are interpreted as distances instead of connection strengths, we follow an approach proposed in
+# literature and use the inverse of the weight to reflect "distance" as lower is better.
+plot_clustering(gc_pre, gc_mid, gc_post, cluster_edge_betweenness, "Girvan-Newman", invert_w=T, mfrow=c(1,3))
 
-plot_label_propagation(gc_pre, gc_mid, gc_post, mfrow=c(1,3))
+# Label Propagation Algorithm
+# Here larger edges correspond to stronger connections, hence we can use normal weights
+plot_clustering(gc_pre, gc_mid, gc_post, cluster_label_prop, "Label Propagation", mfrow=c(1,3))
+
+# Louvain Algorithm cannot be used for directed graphs since it uses multi-level modularity optimization
+# We use the monolevel modularity optimization instead (This works only if igraph was compiled with GLPK!)
+plot_clustering(gc_pre, gc_mid, gc_post, cluster_optimal, "Optimal Modularity", mfrow=c(1,3))
+
+# Spinglass Clustering
+# Creates some weird connections across the map, not that good
+plot_clustering(gc_pre, gc_mid, gc_post, cluster_spinglass, "Spinglass", mfrow=c(1,3))
+
+# Walktrap Clustering
+# Works as well as Label Propagation for finding regional groups
+plot_clustering(gc_pre, gc_mid, gc_post, cluster_walktrap, "Walktrap", mfrow=c(1,3))
