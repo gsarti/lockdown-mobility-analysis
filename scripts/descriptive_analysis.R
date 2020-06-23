@@ -17,26 +17,26 @@ print(paste("Movements (all): Pre", round(sum(E(graph_pre_all)$weight)), " -> Mi
 plot_weighted_graph(graph_pre_all, graph_mid_all, graph_post_all, v_scale=1.5, v_min=3, e_scale=4)
 
 # ... but is significantly lower inter-provincially
-graph_pre_inter <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
-graph_mid_inter <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
-graph_post_inter <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
+graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
+graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
+graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
 
-print(paste("Movements (inter-province): Pre", round(sum(E(graph_pre_inter)$weight)), " -> Mid", 
-            round(sum(E(graph_mid_inter)$weight)), " -> Post", round(sum(E(graph_post_inter)$weight))))
+print(paste("Movements (inter-province): Pre", round(sum(E(graph_pre)$weight)), " -> Mid", 
+            round(sum(E(graph_mid)$weight)), " -> Post", round(sum(E(graph_post)$weight))))
 
 # Now we can see inter-province movements
-plot_weighted_graph(graph_pre_inter, graph_mid_inter, graph_post_inter, v_scale=1, v_min=3, e_scale=3)
+plot_weighted_graph(graph_pre, graph_mid, graph_post, v_scale=1, v_min=3, e_scale=3)
 
 # Visualize movements in one or more regions
 regions <- c("Friuli-Venezia Giulia", "Trentino-South Tyrol", "Veneto")
-plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,3))
+plot_regions_subgraph(graph_pre, graph_mid, graph_post, regions=regions, mfrow=c(1,3))
 
 # Egocentric network of a region (outbound)
 regions <- c("Lombardy")
-plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,1),
+plot_regions_subgraph(graph_pre, graph_mid, graph_post, regions=regions, mfrow=c(1,1),
                       egonet=T, ego_mode="outbound")
 # Egocentric network of a region (inbound)
-plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,1),
+plot_regions_subgraph(graph_pre, graph_mid, graph_post, regions=regions, mfrow=c(1,1),
                       egonet=T, ego_mode="inbound")
 
 # For the analysis we restrict ourselves to inter-province movments since
