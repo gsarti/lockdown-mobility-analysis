@@ -81,7 +81,26 @@ The **network density**, presented in Table-1, indicates, first, that the graph 
 
 In order to implement centrality measures, we have to invert the weights of our graphs. This have to be done because actual weights represent a sort of strength measure between nodes, not a distance(cost) measure. After that we can calculate the **betweenness** and the **eigenvector centrality** for the graphs. Note that the closeness will be calculated later, because this measure is only meaningful in a connected graph.
 
-![](img/btw_plots.PNG)
+The betweenness remains practically the same in all the three graphs, apart from a few small variations. Hovewer in Lazio, Umbria and Abruzzo happens an interesting thing. Before lockdown, Rome has the largest value with respect to neighboring provinces, but as the time passes, its value tends to reduce and the other neighboring provinces tend to assume higher values. 
+This could indicate that Rome's tendency to influence movements (flows) is slightly lost in favor of its neighbors. 
+
+*PLOT BTWN SUBGRAPH IN LAZIO,UMBRIA E ABRUZZO*
+
+Eigenvector centrality shows that there is a loss of influence over the whole network by provinces 
+in the provice of northern and southern Italy, while in central Italy the situation remains almost completely unchanged, despite a slight decrease in values.
+
+*PLOT EIGE_VECT SUBGRAPH IN TUTTA ITALIA*
+
+For what it concerns about **assortativity by degree**, we calculate this measure for the graphs and, as reported in Table-1, we can see that in the mobility pre-lockdown we have a small positive value of $0.134$ that indicates the sligth tendency of nodes of similar degree to connect with each others. An interesting fact is that this measure increases through time, reaching a value of $0.326$. This could indicate that the movements have concentrated more between provinces of the same degree, reducing the movement from "small" to "large" ones.
+
+```{r echo = FALSE}
+assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
+assort_mid <- assortativity_degree(graph_mid,directed = TRUE)
+assort_post <- assortativity_degree(graph_post,directed = TRUE)
+cat(sprintf("Network assortativity by degree pre-lockdown: %f,\nNetwork assortativity by degree mid-lockdown: %f,\nNetwork assortativity by degree post-lockdown: %f\n", 
+            assort_pre,assort_mid,assort_post))
+```
+
 
 ## [3. Detecting Mobility Communities]{#comm-det}
 
