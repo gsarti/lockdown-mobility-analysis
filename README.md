@@ -35,21 +35,21 @@ Taken from Moodle:
 - [x] Review techniques of descriptive analysis presented during the course
 - [x] Select a metric to weight edges among those available
 - [x] Perform descriptive analysis of the 3 networks in an R script
-- [ ] Write report section comparing similarities and differences in the analysis
+- [x] Write report section comparing similarities and differences in the analysis
 - [ ] Add comments to the script
 
 ### 2
 
 - [x] Review techniques of exploratory analysis for community detection
-- [ ] Perform community detection for the 3 networks in an R script
+- [x] Perform community detection for the 3 networks in an R script
 - [ ] Write report section highlighting relevant communities and techniques used
 - [ ] Add comments to the script
 
 ### 3
 
 - [ ] Review exponential random graphs presented during the course
-- [x] Select subnetworks for all three dataset to fit ERGs (All italian provinces, non-looping edges)
-- [ ] Select additional features to improve the quality of fit
+- [x] Select subnetworks for all three dataset to fit ERGs (Giant component, non-looping edges)
+- [x] Select additional features to improve the quality of fit (Mortality, Tot. population and Tot. positive per province)
 - [ ] Perform the modeling R script
 - [ ] Write report section showing the structure and performances of various models
 - [ ] Add comments to the script

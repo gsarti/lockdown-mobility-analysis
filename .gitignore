@@ -13,6 +13,8 @@
 
 # RStudio files
 .Rproj.user/
+*.aux
+*.out
 
 # knitr and R markdown default cache directories
 /*_cache/
@@ -24,3 +26,4 @@
 
 # System files
 *.DS_Store
+

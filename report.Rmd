@@ -1,8 +1,13 @@
 ---
-title: "Lockdown Mobility Network Analysis"
-author: "G. Sarti - E. Fallacara"
-date: "23/6/2020"
+title: "**Lockdown Mobility Network Analysis**"
+subtitle: "Final project for the Social Network Analysis course"
+abstract: "The aim of this project report is to analyze shifts in mobility patterns during Italy's COVID-19 lockdown. More specifically, we consider the Italian mobility network for three specific days during the COVID-19 pandemic outbreak: the beginning of the **first local lockdown** in the Lodi province (25/02/2020), the beginning of **nation-scale lockdown** (03/10/2020) and the **end of nation-scale lockdown** at regional level (05/05/2020). We perform a diachronic descriptive analysis of the mobility network, apply community detection algorithms to highlight mobility shifts at a provincial level and model network connections by the mean of exponential random graphs (ERGs) to show the strong connection between mobility shifts and COVID-19 diffusion statistics. We conclude by comparing our results with the mobility reports publicly released by Google during the lockdown. Our code is available at [https://github.com/gsarti/lockdown-mobility-analysis](https://github.com/gsarti/lockdown-mobility-analysis)"
+author: 
+- Gabriele Sarti
+- Enrico Fallacara
+date: "University of Trieste, A.A. 2019/2020"
 output: pdf_document
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
@@ -21,9 +26,21 @@ graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros =
 
 ## Introduction
 
-The aim of this paper is to analyze shifts in mobility patterns during Italy's COVID-19 lockdown. The dataset contains the estimated raw  number of movements *n* in 3 days during the Covid crisis, filtered by country = IT. The 3 days refers to the **first local lockdown** (25/02/20 Lodi province), the **global lockdown** (03/10/20) and the **end of global lockdown**, at region level (05/05/20). In this dataset are present different metric to estimate movements, we have selected the metric *n* because it represents a kind of measure of popularity.
+The nation-level lockdown implemented by the Italian Government in order to prevent the spreading of the COVID-19 disease in 2020 greatly affected the mobility patterns of roughly 60 millions of Italian citizens and residents. The Italian lockdown was composed by several subsequent phases of tightening and loosening of restrictions, with three most relevant dates arguably being:
 
-## Descriptive Analysis
+- The **first lockdown** of ten municipalities of the province of Lodi, forming the first *zona rossa*, shortly after February 21st, 2020.
+
+- The **national lockdown** that restricted travel at intra-municipal level, except for working necessities and family emergencies, on the evening of March 9th, 2020.
+
+- The **reopening of inter-regional travel** that took place from May 5th, 2020.
+
+In this report, we analyze how the Italian mobility trends have changed during the three phases defined by the aforementioned dates using a dataset containing raw movements *WAIT FOR SPECIFICATIONS* at a macro-scale level. We begin by presenting data and preprocessing steps that were taken in order to perform the analysis in [\textcolor{blue}{Section 1}](#data). [\textcolor{blue}{Section 2}](#desc-anal) contains a diachronic descriptive analysis of the mobility network that highlights shared and different properties of the networks through time. Inside [\textcolor{blue}{Section 3}](#comm-det), we apply highlight mobility shifts at a provincial level by the means of well-established community detection algorithms. [\textcolor{blue}{Section 4}](#modeling) contains our efforts in modeling the mobility network by the means of exponential random graphs (ERGs) to show the strong connection between mobility shifts and COVID-19 spreading statistics. We conclude in [\textcolor{blue}{Section 5}](#conclusion) by comparing our results with the mobility reports publicly released by Google during the lockdown and summarizing our findings.
+
+## [1. Data and Preprocessing]{#data}
+
+The datasets contains the estimated raw number of movements *n* in 3 days during the Covid crisis, filtered by country = IT. The 3 days refers to  In this dataset are present different metric to estimate movements, we have selected the metric *n* because it represents a kind of measure of popularity.
+
+## [2. Diachronic Descriptive Analysis of Mobility Networks]{#desc-anal}
 
 A first insight is given by the sum of the movements in these 3 days. We notice that mobility doesn't change much allowing intra-provincial movements, since inter-province connections have values that are much lower than intra-province ones. Thus, removing the loops, allow us to see only inter-province movements and in this case the mobility is significantly lower:
 
@@ -66,3 +83,10 @@ In order to implement centrality measures, we have to invert the weights of our 
 
 ![](img/btw_plots.PNG)
 
+## [3. Detecting Mobility Communities]{#comm-det}
+
+
+
+## [4. Modeling Mobility Patterns]{#modeling}
+
+## [5. Discussion and Conclusion]{#conclusion}
