@@ -101,6 +101,13 @@ cat(sprintf("Network assortativity by degree pre-lockdown: %f,\nNetwork assortat
             assort_pre,assort_mid,assort_post))
 ```
 
+The **global clustering coefficient**, that refers to netowrk cohesion analysis, is calculated:
+
+ - **Globally**
+ - on **subgraphs** in which all the nodes have a weight that is above or below a fixed **threshold**.
+ - in  **k-core components** of original graphs.
+ 
+ 
 
 ## [3. Detecting Mobility Communities]{#comm-det}
 

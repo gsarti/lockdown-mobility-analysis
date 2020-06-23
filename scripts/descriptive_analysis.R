@@ -114,6 +114,14 @@ assort_post <- assortativity_degree(graph_post,directed = TRUE)
 cat(sprintf("Network assortativity by degree pre-lockdown: %f,\nNetwork assortativity by degree mid-lockdown: %f,\nNetwork assortativity by degree post-lockdown: %f\n", 
             assort_pre,assort_mid,assort_post))
 
+# Netowrk transitivity - Global 
+gloabl_tran_pre <- transitivity(graph_pre,weights = E(graph_pre)$inverted_weight)
+gloabl_tran_mid <- transitivity(graph_mid, weights = E(graph_mid)$inverted_weight)
+gloabl_tran_post <- transitivity(graph_post, weights = E(graph_post)$inverted_weight)
+
+cat(sprintf("Network global transitivity pre-lockdown: %f,\nNetwork global transitivity mid-lockdown: %f,\nNetwork global transitivity post-lockdown: %f\n", 
+            tran_sub_pre_weight_up,tran_sub_mid_weight_up,tran_sub_post_weight_up))
+
 # Weight distribution
 plot_attr_hist(graph_pre, graph_mid, graph_post, attr = "weight", type = "edge", mfrow = c(1,3), xlab = "Edge weights")
 
@@ -124,9 +132,9 @@ sub_mid_weight_up<- subgraph.edges(graph_mid, E(graph_mid)[E(graph_mid)$weight>w
 sub_post_weight_up<- subgraph.edges(graph_post, E(graph_post)[E(graph_post)$weight>w_threshold],delete.vertices = TRUE )
 
 # Obtain transitivity for the subgraph of nodes which have larger weight than the threshold
-tran_sub_pre_weight_up <- transitivity(sub_pre_weight_up,weights = NULL)
-tran_sub_mid_weight_up <- transitivity(sub_mid_weight_up, weights = NULL)
-tran_sub_post_weight_up <- transitivity(sub_post_weight_up, weights = NULL)
+tran_sub_pre_weight_up <- transitivity(sub_pre_weight_up,weights = E(sub_pre_weight_up)$inverted_weight)
+tran_sub_mid_weight_up <- transitivity(sub_mid_weight_up, weights = E(sub_mid_weight_up)$inverted_weight)
+tran_sub_post_weight_up <- transitivity(sub_post_weight_up, weights = E(sub_post_weight_up)$inverted_weight)
 
 cat(sprintf("Network transitivity by weight over threshold pre-lockdown: %f,\nNetwork transitivity by weight over threshold mid-lockdown: %f,\nNetwork transitivity by weight over threshold post-lockdown: %f\n", 
             tran_sub_pre_weight_up,tran_sub_mid_weight_up,tran_sub_post_weight_up))
@@ -136,9 +144,9 @@ sub_pre_weight_lo<- subgraph.edges(graph_pre, E(graph_pre)[E(graph_pre)$weight<=
 sub_mid_weight_lo<- subgraph.edges(graph_mid, E(graph_mid)[E(graph_mid)$weight<=w_threshold],delete.vertices = TRUE )
 sub_post_weight_lo<- subgraph.edges(graph_post, E(graph_post)[E(graph_post)$weight<=w_threshold],delete.vertices = TRUE )
 
-tran_sub_pre_weight_lo <- transitivity(sub_pre_weight_lo,weights = NULL)
-tran_sub_mid_weight_lo <- transitivity(sub_mid_weight_lo, weights = NULL)
-tran_sub_post_weight_lo <- transitivity(sub_post_weight_lo, weights = NULL)
+tran_sub_pre_weight_lo <- transitivity(sub_pre_weight_lo,weights = E(sub_pre_weight_lo)$inverted_weigh)
+tran_sub_mid_weight_lo <- transitivity(sub_mid_weight_lo, weights = E(sub_mid_weight_lo)$inverted_weigh)
+tran_sub_post_weight_lo <- transitivity(sub_post_weight_lo, weights = E(sub_post_weight_lo)$inverted_weigh)
 
 cat(sprintf("Network transitivity by weight under threshold pre-lockdown: %f,\nNetwork transitivity by weight under threshold mid-lockdown: %f,\nNetwork transitivity by weight under threshold post-lockdown: %f\n", 
             tran_sub_pre_weight_lo,tran_sub_mid_weight_lo,tran_sub_post_weight_lo))
