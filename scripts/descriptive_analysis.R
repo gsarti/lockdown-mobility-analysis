@@ -41,6 +41,9 @@ plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, region
 
 # For the analysis we restrict ourselves to inter-province movments since
 # results for the descriptive analysis are empirically quite similar.
+graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
+graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
+graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
 
 # Degree centrality for the 3 graphs
 
