@@ -29,7 +29,7 @@ plot_weighted_graph(graph_pre_inter, graph_mid_inter, graph_post_inter, v_scale=
 
 # Visualize movements in one or more regions
 regions <- c("Friuli-Venezia Giulia", "Trentino-South Tyrol", "Veneto")
-plot_regions_subgraph(graph_pre_inter, graph_mid_inter, graph_post_inter, regions=regions, mfrow=c(1,3))
+plot_regions_subgraph(graph_pre, graph_mid, graph_post, regions=regions, mfrow=c(1,3))
 
 # Egocentric network of a region (outbound)
 regions <- c("Lombardy")
@@ -80,9 +80,9 @@ E(graph_mid)$inverted_weight <- (1/E(graph_mid)$weight*10000)
 E(graph_post)$inverted_weight <- (1/E(graph_post)$weight*10000)
 
 # Betweenness
-btn_pre <- igraph::betweenness(graph_pre,weights = E(graph_pre)$inverted_weight)
-btn_mid <- igraph::betweenness(graph_mid, weights = E(graph_mid)$inverted_weight)
-btn_post <- igraph::betweenness(graph_post, weights =  E(graph_post)$inverted_weight)
+V(graph_pre)$betweenness <- igraph::betweenness(graph_pre,weights = E(graph_pre)$inverted_weight)
+V(graph_mid)$betweenness  <- igraph::betweenness(graph_mid, weights = E(graph_mid)$inverted_weight)
+V(graph_post)$betweenness  <- igraph::betweenness(graph_post, weights =  E(graph_post)$inverted_weight)
 
 # Closeness is not well defined for disconnected graphs
 # cls_pre <- igraph::closeness(graph_pre,weights = E(graph_pre)$inverted_weight )
@@ -96,8 +96,11 @@ eig_post <- igraph::eigen_centrality(graph_post, weights =  E(graph_post)$invert
 
 
 # Graphical representation where the size of each vertex is proportional to betweenness
-v_attrs <- list(btn_pre, btn_mid, btn_post)
-plot_weighted_graph(graph_pre, graph_mid, graph_post,  v_attr=v_attrs, mfrow = c(1,3), e_scale = 2, v_scale = 0.8)
+plot_weighted_graph(graph_pre, graph_mid, graph_post,  mfrow = c(1,3), e_scale = 2, v_scale = 0.8, v_attr = "betweenness")
+
+# Focus on regions of middle Italy to capture the increasing and decreasing of betweenness
+regions <- c("Lazio", "Umbria", "Abruzzo")
+plot_regions_subgraph(graph_pre, graph_mid, graph_post, regions=regions, mfrow=c(1,3), v_attr="betweenness")
 
 # Graphical representation of the graphs where the size of each vertex is proportional
 # to eigenvector centrality

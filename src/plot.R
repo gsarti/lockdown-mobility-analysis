@@ -105,6 +105,7 @@ plot_regions_subgraph <- function(pre, mid, post, regions, egonet=F, ego_mode="o
   plot_weighted_graph(sub_pre, sub_mid, sub_post, v_scale=0.5, v_min=3, e_scale=3, mfrow=mfrow, ...)
 }
 
+
 plot_components <- function(pre, mid, post, mfrow=c(1,1), ...) {
   par(mfrow=mfrow)
   pre_member <- igraph::components(pre)$membership
