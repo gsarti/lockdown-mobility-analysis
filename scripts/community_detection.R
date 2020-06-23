@@ -52,7 +52,7 @@ wcore_mid <- get_subgraph(graph_mid, ids=which(V(graph_mid)$wcore > n_filter), t
 wcore_post <- get_subgraph(graph_post, ids=which(V(graph_post)$wcore > n_filter), type="vertex")
 
 # We can clearly see the three main clusters: Milan macro region, Rome-Naples macroregion and Tuscany
-plot_components(wcore_pre, wcore_mid, wcore_post, e_scale=2)
+plot_components(wcore_pre, wcore_mid, wcore_post, e_scale=2, mfrow=c(1,3))
 
 # Results are very similar when highlighting existing cliques (especially in the mid case)
 plot_cliques(graph_pre, graph_mid, graph_post)

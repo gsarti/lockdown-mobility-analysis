@@ -6,8 +6,13 @@ author:
 - Gabriele Sarti
 - Enrico Fallacara
 date: "University of Trieste, A.A. 2019/2020"
-output: pdf_document
 urlcolor: blue
+output: 
+  pdf_document:
+    fig_crop: no
+    fig_caption: yes
+    includes:
+      in_header: header.tex
 ---
 
 ```{r setup, include=FALSE}
@@ -22,6 +27,10 @@ mobility_post <- read.csv('data/2020-05-05.csv',sep=";")
 graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F)
 graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
 graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
+
+graph_pre_all <- create_graph_from_data(mobility_pre, metric="n", zeros=F)
+graph_mid_all <- create_graph_from_data(mobility_mid, metric="n", zeros=F)
+graph_post_all <- create_graph_from_data(mobility_post, metric="n", zeros=F)
 ```
 
 ## Introduction
@@ -116,3 +125,49 @@ The **global clustering coefficient**, that refers to netowrk cohesion analysis,
 ## [4. Modeling Mobility Patterns]{#modeling}
 
 ## [5. Discussion and Conclusion]{#conclusion}
+
+\blandscape
+
+# [Appendix]{#appendix}
+
+## [A. Coreness Plots for Feb. 25th, 2020 Mobility Network]{#coreness}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/coreness.png}
+\caption{Finding the .rproj file for Chapter 3}
+\label{coreness}
+\end{center}
+\end{figure}
+
+\newpage
+
+## [B. Weighted Coreness Plots for Feb. 25th, 2020 Mobility Network]{#wcoreness}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/weighted_coreness.png}
+\caption{Finding the .rproj file for Chapter 3}
+\label{wcoreness}
+\end{center}
+\end{figure}
+
+\newpage
+
+## [C. Connected Components and Cliques for the Three Lockdown Phases]{#components}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/comp_cliques.png}
+\caption{Finding the .rproj file for Chapter 3}
+\label{coreness}
+\end{center}
+\end{figure}
+
+\elandscape
