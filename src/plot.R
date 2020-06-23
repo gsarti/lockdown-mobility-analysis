@@ -66,6 +66,9 @@ plot_single_weighted_graph <- function(g, v_attr="in_strength", e_attr="weight",
   if(is.character(e_attr)) {
     e_attr <- edge_attr(g, e_attr)
   }
+  if(length(v_attr) != length(V(g)) | length(e_attr) != length(E(g))){
+    print("Dimension mismatch between graph and attributes. Try assigning the attributes to a edge/vertex attribute to ensure proper subsetting.")
+  }
   igraph::plot.igraph(g, vertex.size=plot_size(g, v_attr, v_scale, v_min), 
                       edge.width=plot_size(g, e_attr, e_scale, e_min), ...)
 }
