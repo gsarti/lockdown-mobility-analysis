@@ -166,7 +166,21 @@ The **global clustering coefficient**, that refers to netowrk cohesion analysis,
 \begin{center}
 \includegraphics{img/comp_cliques.png}
 \caption{Finding the .rproj file for Chapter 3}
-\label{coreness}
+\label{comp_cliques}
+\end{center}
+\end{figure}
+
+\newpage
+
+## [C. Community Detection using Girvan-Newman Algorithm and Label Propagation]{#components}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/clustering.png}
+\caption{Finding the .rproj file for Chapter 3}
+\label{clustering}
 \end{center}
 \end{figure}
 
