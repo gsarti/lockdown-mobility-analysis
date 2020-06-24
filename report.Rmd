@@ -236,3 +236,29 @@ knitr::kable(
 \end{figure}
 
 \elandscape
+
+## [D. Regions of middle Italy where the size of each vertex is proportional to betweenness]{#betweenness}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/btw_regions.PNG}
+\caption{Finding the .rproj file for Chapter 3}
+\label{betweenness}
+\end{center}
+\end{figure}
+
+## [E. Network graphs where the size of each vertex is proportional to eigenvector centrality]{#eigenvector_centrality}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/eig_vect_italy.png}
+\caption{Finding the .rproj file for Chapter 3}
+\label{eigenvector centrality}
+\end{center}
+\end{figure}
+
+\newpage
