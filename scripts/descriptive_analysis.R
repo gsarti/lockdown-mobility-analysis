@@ -120,7 +120,7 @@ gloabl_tran_mid <- transitivity(graph_mid, weights = E(graph_mid)$inverted_weigh
 gloabl_tran_post <- transitivity(graph_post, weights = E(graph_post)$inverted_weight)
 
 cat(sprintf("Network global transitivity pre-lockdown: %f,\nNetwork global transitivity mid-lockdown: %f,\nNetwork global transitivity post-lockdown: %f\n", 
-            tran_sub_pre_weight_up,tran_sub_mid_weight_up,tran_sub_post_weight_up))
+            gloabl_tran_pre,gloabl_tran_mid,gloabl_tran_post))
 
 # Weight distribution
 plot_attr_hist(graph_pre, graph_mid, graph_post, attr = "weight", type = "edge", mfrow = c(1,3), xlab = "Edge weights")
@@ -157,7 +157,6 @@ coreness_pre <- graph.coreness(graph_pre)
 coreness_mid <- graph.coreness(graph_mid)
 coreness_post <- graph.coreness(graph_post) 
 selected_coreness <- min(max(coreness_pre),max(coreness_mid), max(coreness_post))
-
 kcore_pre <- induced.subgraph(graph_pre,vids=which(coreness_pre == selected_coreness))
 kcore_mid <- induced.subgraph(graph_mid,vids=which(coreness_mid == selected_coreness))
 kcore_post <- induced.subgraph(graph_post,vids=which(coreness_post == selected_coreness))
