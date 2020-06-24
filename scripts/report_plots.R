@@ -103,3 +103,8 @@ plot_clustering <- function(pre, mid, post, cluster_func, name, gini_attr="regio
 }
 plot_clustering(gc_pre, gc_mid, gc_post, cluster_edge_betweenness, "Girvan-Newman", invert_w=T)
 plot_clustering(gc_pre, gc_mid, gc_post, cluster_label_prop, "Label Propagation")
+
+
+pd <- read.csv("data/provinces_data.csv")
+
+pd$Superficie

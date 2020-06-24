@@ -223,7 +223,7 @@ knitr::kable(
 
 \newpage
 
-## [C. Community Detection using Girvan-Newman Algorithm and Label Propagation]{#components}
+## [C. Community Detection using Girvan-Newman Algorithm and Label Propagation]{#comm_det_plots}
 
 \vspace{5mm}
 
@@ -235,7 +235,7 @@ knitr::kable(
 \end{center}
 \end{figure}
 
-\elandscape
+\newpage
 
 ## [D. Regions of middle Italy where the size of each vertex is proportional to betweenness]{#betweenness}
 
@@ -249,6 +249,8 @@ knitr::kable(
 \end{center}
 \end{figure}
 
+\newpage
+
 ## [E. Network graphs where the size of each vertex is proportional to eigenvector centrality]{#eigenvector_centrality}
 
 \vspace{5mm}
@@ -261,4 +263,4 @@ knitr::kable(
 \end{center}
 \end{figure}
 
-\newpage
+\elandscape
