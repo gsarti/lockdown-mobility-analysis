@@ -1,11 +1,10 @@
 # Required packages
-#install.packages('ggmap', 'igraph', 'dplyr', 'stringr')
+#install.packages('ggmap', 'igraph', 'dplyr', 'stringr', 'statnet')
 library(ggmap)
 library(igraph)
 library(dplyr)
 library(stringr)
 library(statnet)
-library(qgraph)
 
 normalize_counts <- function(x, scale, min=0){ max(log(as.numeric(x))/scale, min)}
 plot_size <- function(g, attr, scale=10, min=0){unlist(lapply(attr, function(x) {normalize_counts(x, scale = scale, min=min)}))}
@@ -133,11 +132,11 @@ apply_comm_func <- function(pre, mid, post, comm_pre, comm_mid, comm_post, func,
   pre_vec <- sapply(unique(membership(comm_pre)), function(x){round(func(pre, comm_pre, x, ...),3)})
   mid_vec <- sapply(unique(membership(comm_mid)), function(x){round(func(mid, comm_mid, x, ...),3)})
   post_vec <- sapply(unique(membership(comm_post)), function(x){round(func(post, comm_post, x, ...),3)})
-  print(paste("Pre", name, ":"))
+  print(paste("Pre", name, ": Mean", mean(pre_vec), "Std", sd(pre_vec)))
   print(pre_vec)
-  print(paste("Mid", name, ":"))
+  print(paste("Mid", name, ": Mean", mean(mid_vec), "Std", sd(mid_vec)))
   print(mid_vec)
-  print(paste("Post", name, ":"))
+  print(paste("Post", name, ": Mean", mean(post_vec), "Std", sd(post_vec)))
   print(post_vec)
 }
 
@@ -145,7 +144,7 @@ apply_comm_func <- function(pre, mid, post, comm_pre, comm_mid, comm_post, func,
 intra_clust_density <- function(g, comm, gg) {
   subg <- induced.subgraph(g, which(membership(comm)==gg))
   d <- ecount(subg)/(vcount(subg) * (vcount(subg) - 1))
-  return(d)
+  return(ifelse(is.nan(d), 0, d))
 }
 
 inter_clust_density <- function(g, comm, gg) {
@@ -153,7 +152,7 @@ inter_clust_density <- function(g, comm, gg) {
   n_inter_edges <- length(E(g)[V(g)[membership(comm)==gg] %--%
                           V(g)[membership(comm)!=gg]])
   d <- n_inter_edges/(vcount(subg) * (vcount(g) - vcount(subg)))
-  return(d)
+  return(ifelse(is.nan(d), 0, d))
 }
 
 gini_index <- function(g, comm=NULL, gg, attr){

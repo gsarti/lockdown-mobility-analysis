@@ -13,8 +13,8 @@ graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros=F)
 graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros=F)
 graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros=F)
 
-plot_attr_hist(graph_pre_all, graph_mid_all, graph_post_all, 'in_strength', "Total Inbound Strength")
-plot_attr_hist(graph_pre, graph_mid, graph_post, 'in_strength', "Total Inbound Strength")
+plot_attr_hist(graph_pre_all, graph_mid_all, graph_post_all, 'in_strength', "Total Inbound Strength", mfrow=c(1,3))
+plot_attr_hist(graph_pre, graph_mid, graph_post, 'in_strength', "Total Inbound Strength", mfrow=c(1,3))
 
 # Coreness by total degree
 plot_coreness(graph_pre_all, graph_mid_all, graph_post_all, coreness, coreness_param="all", 
@@ -56,10 +56,10 @@ sub_group_post <- subgraph(graph_post,group_post)
 # A network can be said "smallworld" if its smallworldness is higher 
 # than one (a stricter rule is smallworldness>=3; Humphries & Gurney, 2008).
 
+require(qgraph)
 qgraph::smallworldness(sub_group_pre, B = 1000, up = 0.995, lo = 0.005)
 qgraph::smallworldness(sub_group_mid, B = 1000, up = 0.995, lo = 0.005)
 qgraph::smallworldness(sub_group_post, B = 1000, up = 0.995, lo = 0.005)
-
 
 # We filter out nodes with weighted coreness rank = 2, a.k.a. with less than 1000 raw inter-province movements 
 # (for inter-province graph)

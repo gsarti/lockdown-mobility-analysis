@@ -13,6 +13,7 @@ graph_pre_all <- create_graph_from_data(mobility_pre, metric="n", zeros=F)
 graph_mid_all <- create_graph_from_data(mobility_mid, metric="n", zeros=F)
 graph_post_all <- create_graph_from_data(mobility_post, metric="n", zeros=F)
 
+
 # Coreness, plot at 1500x750
 par(mfrow=c(1,2), mai=c(0,0,0,0), omi=c(0,0,0,0), mar=c(0,2,0,4), yaxs="i")
 pre_core <- set_vertex_attr(graph_pre, "core", value=coreness(graph_pre, "all"))
@@ -21,6 +22,7 @@ igraph::plot.igraph(graph_pre, layout=layout, vertex.size=6, vertex.label.cex=1,
 pre_core_all <- set_vertex_attr(graph_pre_all, "core", value=coreness(graph_pre_all, "all"))
 layout <- coreness_layout(graph_pre_all, coreness, "all")
 igraph::plot.igraph(graph_pre_all, layout=layout, vertex.size=6, vertex.label.cex=1, edge.arrow.size=0.01)
+
 
 # Weighted coreness, plot at 1500x750
 all_bin_size <- 10000
@@ -32,6 +34,7 @@ igraph::plot.igraph(graph_pre, layout=layout, vertex.size=6, vertex.label.cex=1,
 pre_core_all <- set_vertex_attr(graph_pre_all, "wcore", value=weighted_coreness(graph_pre_all, all_bin_size))
 layout <- coreness_layout(graph_pre_all, weighted_coreness, all_bin_size)
 igraph::plot.igraph(graph_pre_all, layout=layout, vertex.size=6, vertex.label.cex=1, edge.arrow.size=0.01)
+
 
 # Components & Cliques, 1500x750
 all_bin_size <- 10000
@@ -73,6 +76,7 @@ plot_single_weighted_graph(c_pre, edge.lty=c("dotted"), edge.arrow.size=0.02, ve
 plot_single_weighted_graph(c_mid, edge.lty=c("dotted"), edge.arrow.size=0.02, vertex.size=6, edge.arrow.size=0.05, vertex.color=vcols2[[2]])
 plot_single_weighted_graph(c_post, edge.lty=c("dotted"), edge.arrow.size=0.02, vertex.size=6, edge.arrow.size=0.05, vertex.color=vcols2[[3]])
 
+
 # Newman-Girvan and Label Propagation Clustering
 par(mfrow=c(2,3), mai=c(0,0,0,0), omi=c(0,0,0,0), mar=c(0,2,0,4), yaxs="i")
 gc_pre <- decompose(graph_pre, mode="weak")[[1]]
@@ -105,6 +109,22 @@ plot_clustering(gc_pre, gc_mid, gc_post, cluster_edge_betweenness, "Girvan-Newma
 plot_clustering(gc_pre, gc_mid, gc_post, cluster_label_prop, "Label Propagation")
 
 
-pd <- read.csv("data/provinces_data.csv")
+# Inbound Strength Histograms
+par(mfrow=c(2,3))
+xlab <- '# of Movements'
+attr <- 'in_strength'
+type <- 'vertex'
+breaks <- 15
+pre_attr <- get_attr(graph_pre, attr, type)
+mid_attr <- get_attr(graph_mid, attr, type)
+post_attr <- get_attr(graph_post, attr, type)
+hist(pre_attr, xlab = paste(xlab, "25/02"), ylab="# of Provinces", main="", breaks=breaks)
+hist(mid_attr, xlab = paste(xlab, "10/03"), ylab="# of Provinces", main="Inter-Province Mobility", breaks=breaks)
+hist(post_attr, xlab = paste(xlab, "05/05"), ylab="# of Provinces",main="", breaks=breaks)
+pre_attr <- get_attr(graph_pre_all, attr, type)
+mid_attr <- get_attr(graph_mid_all, attr, type)
+post_attr <- get_attr(graph_post_all, attr, type)
+hist(pre_attr, xlab = paste(xlab, "25/02"), ylab="# of Provinces",main="", breaks=breaks)
+hist(mid_attr, xlab = paste(xlab, "10/03"), ylab="# of Provinces", main="Total Mobility", breaks=breaks)
+hist(post_attr, xlab = paste(xlab, "05/05"), ylab="# of Provinces", main="",breaks=breaks)
 
-pd$Superficie

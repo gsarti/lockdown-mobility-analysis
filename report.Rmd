@@ -1,5 +1,5 @@
 ---
-title: "**Lockdown Mobility Network Analysis**"
+title: "**Analyzing the Impact of Italy's COVID-19 Lockdown on National Mobility Networks**"
 subtitle: "Final project for the Social Network Analysis course"
 abstract: "The aim of this project report is to analyze shifts in mobility patterns during Italy's COVID-19 lockdown. More specifically, we consider the Italian mobility network for three specific days during the COVID-19 pandemic outbreak: the beginning of the **first local lockdown** in the Lodi province (25/02/2020), the beginning of **nation-scale lockdown** (03/10/2020) and the **end of nation-scale lockdown** at regional level (05/05/2020). We perform a diachronic descriptive analysis of the mobility network, apply community detection algorithms to highlight mobility shifts at a provincial level and model network connections by the mean of exponential random graphs (ERGs) to show the strong connection between mobility shifts and COVID-19 diffusion statistics. We conclude by comparing our results with the mobility reports publicly released by Google during the lockdown. Our code is available at [https://github.com/gsarti/lockdown-mobility-analysis](https://github.com/gsarti/lockdown-mobility-analysis)"
 author: 
@@ -43,7 +43,7 @@ The nation-level lockdown implemented by the Italian Government in order to prev
 
 - The **reopening of inter-regional travel** that took place from May 5th, 2020.
 
-In this report, we analyze how the Italian mobility trends have changed during the three phases defined by the aforementioned dates using a dataset containing raw movements *WAIT FOR SPECIFICATIONS* at a macro-scale level. We begin by presenting data and preprocessing steps that were taken in order to perform the analysis in [\textcolor{blue}{Section 1}](#data). [\textcolor{blue}{Section 2}](#desc-anal) contains a diachronic descriptive analysis of the mobility network that highlights shared and different properties of the networks through time. Inside [\textcolor{blue}{Section 3}](#comm-det), we apply highlight mobility shifts at a provincial level by the means of well-established community detection algorithms. [\textcolor{blue}{Section 4}](#modeling) contains our efforts in modeling the mobility network by the means of exponential random graphs (ERGs) to show the strong connection between mobility shifts and COVID-19 spreading statistics. We conclude in [\textcolor{blue}{Section 5}](#conclusion) by comparing our results with the mobility reports publicly released by Google during the lockdown and summarizing our findings.
+In this report, we analyze how the Italian mobility trends have changed during the three phases defined by the aforementioned dates using a dataset containing raw movements *WAIT FOR SPECIFICATIONS* at a macro-scale level. We begin by presenting data and preprocessing steps that were taken in order to perform the analysis in [\textcolor{blue}{Section 1}](#data). [\textcolor{blue}{Section 2}](#desc-anal) contains a diachronic descriptive analysis of the mobility network that highlights shared and different properties of the networks through time. In [\textcolor{blue}{Section 3}](#comm-det), we apply highlight mobility shifts at a provincial level by the means of well-established community detection algorithms. [\textcolor{blue}{Section 4}](#modeling) contains our efforts in modeling the mobility network by the means of exponential random graphs (ERGs) to show the strong connection between mobility shifts and COVID-19 spreading statistics. We conclude in [\textcolor{blue}{Section 5}](#conclusion) by comparing our results with the mobility reports publicly released by Google during the lockdown and summarizing our findings.
 
 ## [1. Data and Preprocessing]{#data}
 
@@ -171,11 +171,73 @@ knitr::kable(
 )
 
 ```
-## [3. Detecting Mobility Communities]{#comm-det}
+## [3. Analyzing Mobility Communities]{#comm-det}
 
+We limit ourselves to the analysis of `inbound_strength`, i.e. the sum of the weights of inbound edges to each node. Intuitively, it can be regarded as a proxy for the importance of the node inside the network. Figure [\textcolor{blue}{N}](#fig:histo_mobility) shows that movements across provinces follow a power law that is typical for those types of networks, with very few provinces accounting for most of the movements. We see from the histograms that the value of `inbound_strength` is much higher when accounting for intra-provincial movements. This is also evident in the visualizations of Appendix [\textcolor{blue}{X}](#app:eigenvector_centrality), where this value is used to  weight edge widths. While total movements don't seem to be affected, we can see a drop of roughly 30% in inter-provincial movements between February 25th and March 10th, with a further 13% decrease in mobility between March 10th and May 5th. These percentages match our intuition that inter-provincial mobility suffered the most from inter-regional lockdown measures.
 
+![Mobility histograms representing the distribution of total inbound movements across provinces at various stages of the Italian lockdown.](img/hist_mobility.png){#fig:histo_mobility}
+
+We proceeded to compute and visualize the coreness of the network, as shown in Appendix [\textcolor{blue}{X}](#app:coreness). As expected, removing intra-provincial movements (looping edges) doesn't affect at all the coreness structure. From the coreness plots structure it is evident how north-eastern, southern and insular provinces have a much lower number of connections with respect to central (e.g. Tuscany) and north-western (e.g. Lombardy, Piedmont) ones. Calabrian and Sardinian provinces have the lowest number of connections.
+
+In order to account for the intrinsically weighted structure of our networks, we developed a **weighted version of the coreness algorithm** that groups vertices in bins of fixed length based on their weights and uses bin membership as a proxy for weighted coreness. In our specific case, we used a bin size of 500 raw movements for the network without intra-provincial movements, and 10'000 for the network containing all movements. The details of our implementation are presented in Algorithm [\textcolor{blue}{1}](#alg:weighted-coreness). We see from the results shown in Appendix [\textcolor{blue}{X}](#app:wcoreness) that our approach effectively highlights the centrality of northwestern provinces when we account only for inter-provincial movements, while it shows a strong correlation with population counts when accounting for all external and internal movements in the province.
+
+\begin{algorithm}
+\SetAlgoLined
+\DontPrintSemicolon
+ \textit{Input:} Network $\mathcal{G}(V_G,E_G)$, strenght bin size $b$\;
+ Set current weighted k-core subgraph $\mathcal{K}(V_k, E_k) \leftarrow \mathcal{G}$\;
+ Set max inbound strength $S \leftarrow \max{(\text{strength}(V))}$\;
+ Set index $i \leftarrow 1$\;
+ \For{min in $b, 2b, 3b,\dots S$}{
+    Create bin graph $\mathcal{B}(V_B,E_B) \leftarrow \text{Induced subgraph}(\mathcal{K}, \text{ strength}\small(V_k\small) \leq min)$\;
+    \If{$|V_B| > 0$}{
+        Set \textit{wcore} of $V_G$ that were not filtered in $\mathcal{B}$ to $i$\;
+        $\mathcal{G}(V_B \cap V_G)[wcore] \leftarrow i$\;
+        $i \leftarrow i+1$\;
+    }
+    Set current weighted k-core subgraph to the complement of bin graph\;
+    $\mathcal{K} \leftarrow \text{Induced subgraph}(\mathcal{K}, \text{ strength}\small(V_k\small) > min)$\;
+ }
+ \textit{Output:} Network $\mathcal{G}(V_G,E_G)$ with \textit{wcore} vertex attributes\;
+ \caption{Weighted Coreness}
+ \label{alg:weighted-coreness}
+\end{algorithm}
+
+For the second part of the community analysis, we proceeded only with the network of inter-provincial movements since the presence of looping edges wasn't relevant for detecting communities inside the network. We inspected the component structure of the network in the three analyzed dates, finding that a single giant component comprising almost all the provinces, with few isolated nodes left aside in Southern Italy, was present at all times. This isn't surprising, as we expected some level of communication at a national level at all times for business and family-related reasons despite the lockdown.
+
+In Appendix [\textcolor{blue}{X}](#app:components) we show the similarity between the structure of cliques through time and the components found by considering network actors with weighted coreness rank > 2, i.e. with at least 1000 inter-provincial outbound movements at all times. This highlights the fact that most tight-knit communities are also the ones having the higher number of connections in general, reflecting the principle of preferential attachment which is commonly verified in many real-world social networks. This fact is also verified by the presence of a **small-worldness index** above 3 at all times, and a global transitivity that is significantly above chance. Both cliques and weighted coreness components highlight the centrality of Milan and its neighbouring provinces, Tuscany provinces and the Rome-Naples macro-region. Weighted coreness components further provide additional information by highlighting the high connectivity of Veneto and representing well the drop in connectivity during the lockdown.
+
+To conclude the section, we performed some community detection experiments leveraging two well-established algorithms. The **Girvan-Newman algorithm** finds communities by progressively removing edges based on their betweenness. Since edge weigths are interpreted as distances by the algorithm, we converted our raw movement weights $w$ following an approach suggested in the literature (CIT?):
+
+$$w' = \frac{1}{w}\times 10'000$$
+
+The **Label propagation algorithm**, instead, iteratively sets node community memberships based on the weighted most common membership across neighbouring nodes until convergence. This approach doesn't require inverting raw movements weights $w$ since larger edge weights correspond to stronger connections. Results produced by the two methods are presented descriptively in Table [\textcolor{blue}{X}](#tab:clustering) and visually in Appendix [\textcolor{blue}{X}](#app:clustering). We could not apply standard multi-level modularity optimization methods given the directed nature of our network.
+
+The label propagation algorithm appears to be more effective at modeling the community structure of the networks at various times. Communities found with label propagation closely approximate regional membership at all times, a fact that matches the empirical presence of regional hubs of communication across the Italian territory. It is interesting to note that both algorithms correctly highlight a decrease in inter-community edges over time, which is also made evident by the drastic reduction in red inter-cluster edges in the plots of Appendix [\textcolor{blue}{X}](#app:clustering).
 
 ## [4. Modeling Mobility Patterns]{#modeling}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l@{\qquad}ccc@{\qquad}ccc}
+\toprule
+ & \multicolumn{3}{c}{\textbf{Girvan-Newman}} & \multicolumn{3}{c}{\textbf{Label Propagation}} \\
+ \cmidrule(lr){2-4}
+ \cmidrule(lr){5-7}
+& \multicolumn{1}{c}{\textbf{25/02}} & \multicolumn{1}{c}{\textbf{10/03}} & \multicolumn{1}{c}{\textbf{05/05}} & \multicolumn{1}{c}{\textbf{25/02}} & \multicolumn{1}{c}{\textbf{10/03}} & \multicolumn{1}{c}{\textbf{05/05}} \\
+\midrule
+\# communities & 36 & 60 & 7 & 22 & 22 & 24\\
+modularity $Q$ & .39 & .25 & .39 & .51 & .57 & .59 \\
+\midrule
+$\delta_{int}$ & .19 (.38) & .12 (.31) & .54 (.37) & .78 (.21) & .68 (.25) & .73 (.23) \\
+$\delta_{ext}$ & .07 (.05) & .08 (.04) & .01 (.01) & .04 (.03) & .03 (.01) & .03 (.01) \\
+Gini index & .96 (.18) & .97 (.14) & .66 (.37) & .78 (.22) & .76 (.22) & .80 (.21) \\
+\bottomrule
+\end{tabular}
+\caption{Values of the metrics computed using two community detection approaches. Values for intra-cluster density $\delta_{int}$, inter-cluster density $\delta_{ext}$ and Gini index are presented in the \textit{mean (stdev)} format.}
+\label{tab:clustering}
+\end{center}
+\end{table}
 
 ## [5. Discussion and Conclusion]{#conclusion}
 
@@ -183,7 +245,7 @@ knitr::kable(
 
 # [Appendix]{#appendix}
 
-## [A. Coreness Plots for Feb. 25th, 2020 Mobility Network]{#coreness}
+## [A. Coreness Plots for Feb. 25th, 2020 Mobility Network]{#app:coreness}
 
 \vspace{5mm}
 
@@ -191,13 +253,12 @@ knitr::kable(
 \begin{center}
 \includegraphics{img/coreness.png}
 \caption{Finding the .rproj file for Chapter 3}
-\label{coreness}
 \end{center}
 \end{figure}
 
 \newpage
 
-## [B. Weighted Coreness Plots for Feb. 25th, 2020 Mobility Network]{#wcoreness}
+## [B. Weighted Coreness Plots for Feb. 25th, 2020 Mobility Network]{#app:wcoreness}
 
 \vspace{5mm}
 
@@ -205,13 +266,12 @@ knitr::kable(
 \begin{center}
 \includegraphics{img/weighted_coreness.png}
 \caption{Finding the .rproj file for Chapter 3}
-\label{wcoreness}
 \end{center}
 \end{figure}
 
 \newpage
 
-## [C. Connected Components and Cliques for the Three Lockdown Phases]{#components}
+## [C. Connected Components and Cliques for the Three Lockdown Phases]{#app:components}
 
 \vspace{5mm}
 
@@ -219,13 +279,12 @@ knitr::kable(
 \begin{center}
 \includegraphics{img/comp_cliques.png}
 \caption{Finding the .rproj file for Chapter 3}
-\label{comp_cliques}
 \end{center}
 \end{figure}
 
 \newpage
 
-## [C. Community Detection using Girvan-Newman Algorithm and Label Propagation]{#comm_det_plots}
+## [C. Community Detection using Girvan-Newman Algorithm and Label Propagation]{#app:comm_det_plots}
 
 \vspace{5mm}
 
@@ -233,13 +292,12 @@ knitr::kable(
 \begin{center}
 \includegraphics{img/clustering.png}
 \caption{Finding the .rproj file for Chapter 3}
-\label{clustering}
 \end{center}
 \end{figure}
 
 \newpage
 
-## [D. Regions of middle Italy where the size of each vertex is proportional to betweenness]{#betweenness}
+## [D. Regions of middle Italy where the size of each vertex is proportional to betweenness]{#app:betweenness}
 
 \vspace{5mm}
 
@@ -247,13 +305,12 @@ knitr::kable(
 \begin{center}
 \includegraphics{img/btw_regions.png}
 \caption{Finding the .rproj file for Chapter 3}
-\label{betweenness}
 \end{center}
 \end{figure}
 
 \newpage
 
-## [E. Network graphs where the size of each vertex is proportional to eigenvector centrality]{#eigenvector_centrality}
+## [E. Network graphs where the size of each vertex is proportional to eigenvector centrality]{#app:eigenvector_centrality}
 
 \vspace{5mm}
 
@@ -261,7 +318,6 @@ knitr::kable(
 \begin{center}
 \includegraphics{img/eig_vect_italy.png}
 \caption{Finding the .rproj file for Chapter 3}
-\label{eigenvector centrality}
 \end{center}
 \end{figure}
 
