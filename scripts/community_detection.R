@@ -44,10 +44,6 @@ group_pre <- igraph::groups(igraph::components(graph_pre))$`1`
 group_mid <- igraph::groups(igraph::components(graph_mid))$`1`
 group_post <- igraph::groups(igraph::components(graph_post))$`1`
 
-group_pre
-group_mid
-group_post
-
 sub_group_pre <- subgraph(graph_pre,group_pre)
 sub_group_mid <- subgraph(graph_mid,group_mid)
 sub_group_post <- subgraph(graph_post,group_post)
