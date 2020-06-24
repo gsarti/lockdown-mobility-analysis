@@ -5,6 +5,7 @@ library(igraph)
 library(dplyr)
 library(stringr)
 library(statnet)
+library(qgraph)
 
 normalize_counts <- function(x, scale, min=0){ max(log(as.numeric(x))/scale, min)}
 plot_size <- function(g, attr, scale=10, min=0){unlist(lapply(attr, function(x) {normalize_counts(x, scale = scale, min=min)}))}

@@ -16,7 +16,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align="center")
 source('src/utils.R')
 source("src/plot.R")
 
@@ -57,9 +57,9 @@ A first insight is given by the sum of the movements in these 3 days. We notice 
 print(paste("Movements (inter-province): Pre", round(sum(E(graph_pre)$weight)), " -> Mid", 
             round(sum(E(graph_mid)$weight)), " -> Post", round(sum(E(graph_post)$weight))))
 ```
-A graphical representation of this phenomenon is given by Fig 1.
+A graphical representation of this phenomenon is given by the next figure.
 
-*PLOTTARE 3 IMMAGINI CHE COMPONGONO LA GIF*
+ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ![](img/pre_mid_post.png) 
 
 We restrict our attention to inter-province movments for the descriptive analysis, since they capture better the variation of mobility and the results for intra-province are empirically quite similar. The graphs are **directed**, **weighted** (accoriding to the metric value) and **disconnected** (this is valid for both implementations).
 
@@ -93,12 +93,12 @@ In order to implement centrality measures, we have to invert the weights of our 
 The betweenness remains practically the same in all the three graphs, apart from a few small variations. Hovewer in Lazio, Umbria and Abruzzo happens an interesting thing. Before lockdown, Rome has the largest value with respect to neighboring provinces, but as the time passes, its value tends to reduce and the other neighboring provinces tend to assume higher values. 
 This could indicate that Rome's tendency to influence movements (flows) is slightly lost in favor of its neighbors. 
 
-*PLOT BTWN SUBGRAPH IN LAZIO,UMBRIA E ABRUZZO*
+*CITARE PLOT BTWN SUBGRAPH IN LAZIO,UMBRIA E ABRUZZO*
 
 Eigenvector centrality shows that there is a loss of influence over the whole network by provinces 
 in the provice of northern and southern Italy, while in central Italy the situation remains almost completely unchanged, despite a slight decrease in values.
 
-*PLOT EIGE_VECT SUBGRAPH IN TUTTA ITALIA*
+*CITARE PLOT EIGE_VECT SUBGRAPH IN TUTTA ITALIA*
 
 For what it concerns about **assortativity by degree**, we calculate this measure for the graphs and, as reported in Table 1, we can see that in the mobility pre-lockdown we have a small positive value of $0.134$ that indicates the sligth tendency of nodes of similar degree to connect with each others. An interesting fact is that this measure increases through time, reaching a value of $0.326$. This could indicate that the movements have concentrated more between provinces of the same degree, reducing the movement from "small" to "large" ones.
 
@@ -108,7 +108,9 @@ The **global clustering coefficient**, that refers to netowrk cohesion analysis,
  - on **subgraphs** in which all the nodes have a weight that is above or below a fixed **threshold**.
  - in  **k-cores components** of original graphs.
  
-As reported in Table 1, the **transitivity** for the whole network tends to remain the same, except for a small increase that isn't significant. Thus, to inspect better this property, we calculate this measure on two subgraphs obtained placing a $threshold_w = 500$ on weights. The value that we choose is based on the distribution of weights in the network, noticing that most part of nodes  have weights that go from $0$ to $500$. As we can notice from the results presented in the table, for the subgraphs of nodes below the threshold, the transitivity, that is smaller with respect the global value, reamins again pratically the same, instead for the other subgraph there is a significant increment of $0.10$. This could mean that big provinces tends to increase their connections through the three different phases of lockdown. We have also calculated this index on k-cores of the graph, selecting as k the minimum value between the three coreness value, resulting in $k = 8$ (notice that only the graph referred to the mobility pre-lockdown has a value of k bigger than the selected, with the coreness equal to $10$). The transitivity calculated on these maximal subgraphs has a significant decrease of $0.18$, as we expected, indicating that these subgraphs have a loss in terms of cohesion through the time.
+As reported in Table 1, the **transitivity** for the whole network tends to remain the same, except for a small increase that isn't significant. Thus, to inspect better this property, we calculate this measure on two subgraphs obtained placing a $threshold_w = 500$ on weights. The value that we choose is based on the distribution of weights in the network, noticing that most part of nodes  have weights that go from $0$ to $500$. As we can notice from the results presented in the table, for the subgraphs of nodes below the threshold, the transitivity, that is smaller with respect the global value, remains again pratically the same, instead for the other subgraph there is a significant increment of $0.10$. This could mean that big provinces tends to increase their connections through the three different phases of lockdown. We have also calculated this index on k-cores of the graph, selecting as k the minimum value between the three coreness value, resulting in $k = 8$ (notice that only the graph referred to the mobility pre-lockdown has a value of k bigger than the selected, with the coreness equal to $10$). The transitivity calculated on these maximal subgraphs has a significant decrease of $0.18$, as we expected, indicating that these subgraphs have a loss in terms of cohesion through the time.
+
+After this first descpritive analysis we can deduce that the decrease of movements caused by lock-down measures causes a loss of influence of the nodes in the whole network, with an increasing tendecy of similar degree nodes to connect with each others, indicating that movements from small provinces to large ones decrease, in favor of smaller and closer provinces, in terms of distance. The opposite happens for big provinces, movements from bigger to smaller reduce in favor of movements between big ones.
  
 ```{r echo = FALSE}
 assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
@@ -243,7 +245,7 @@ knitr::kable(
 
 \begin{figure}
 \begin{center}
-\includegraphics{img/btw_regions.PNG}
+\includegraphics{img/btw_regions.png}
 \caption{Finding the .rproj file for Chapter 3}
 \label{betweenness}
 \end{center}

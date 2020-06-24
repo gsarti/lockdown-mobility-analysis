@@ -40,9 +40,26 @@ plot_attr_hist(graph_pre, graph_mid, graph_post, 'wcore', "Weighted Coreness")
 # From now on, we limit ourselves to analyzing only the network without intra-province movements (no loops)
 
 # The network is basically a single giant component, with some exception
-igraph::groups(igraph::components(graph_pre))$`1`
-igraph::groups(igraph::components(graph_mid))$`1`
-igraph::groups(igraph::components(graph_post))$`1`
+group_pre <- igraph::groups(igraph::components(graph_pre))$`1`
+group_mid <- igraph::groups(igraph::components(graph_mid))$`1`
+group_post <- igraph::groups(igraph::components(graph_post))$`1`
+
+group_pre
+group_mid
+group_post
+
+sub_group_pre <- subgraph(graph_pre,group_pre)
+sub_group_mid <- subgraph(graph_mid,group_mid)
+sub_group_post <- subgraph(graph_post,group_post)
+
+# Checking the "smallworld" property on giant components
+# A network can be said "smallworld" if its smallworldness is higher 
+# than one (a stricter rule is smallworldness>=3; Humphries & Gurney, 2008).
+
+qgraph::smallworldness(sub_group_pre, B = 1000, up = 0.995, lo = 0.005)
+qgraph::smallworldness(sub_group_mid, B = 1000, up = 0.995, lo = 0.005)
+qgraph::smallworldness(sub_group_post, B = 1000, up = 0.995, lo = 0.005)
+
 
 # We filter out nodes with weighted coreness rank = 2, a.k.a. with less than 1000 raw inter-province movements 
 # (for inter-province graph)
