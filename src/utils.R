@@ -116,6 +116,18 @@ weighted_coreness <- function(g, bin_size) {
   return(w_cores)
 }
 
+get_clique_ids <- function(g, clq) {
+  ids <- rep(0, length(V(g)))
+  names(ids) <- V(g)$name
+  i <- 1
+  for (cl in clq) {
+    sgraph <- igraph::induced.subgraph(g, vids=cl)
+    ids[V(sgraph)$name] <- i
+    i <- i+1
+  }
+  return(ids)
+}
+
 apply_comm_func <- function(pre, mid, post, comm_pre, comm_mid, comm_post, func, name, ...) {
   pre_vec <- sapply(unique(membership(comm_pre)), function(x){round(func(pre, comm_pre, x, ...),3)})
   mid_vec <- sapply(unique(membership(comm_mid)), function(x){round(func(mid, comm_mid, x, ...),3)})
