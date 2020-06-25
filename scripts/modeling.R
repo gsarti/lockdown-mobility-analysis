@@ -15,6 +15,8 @@ covid_pre <- read.csv("data/covid_25_02.csv")
 covid_mid <- read.csv("data/covid_10_03.csv")
 covid_post <- read.csv("data/covid_05_05.csv")
 
+# Data are double-checked to follow alphabetical order in both graphs and dataframes
+# so that there are no mismatchs in this procedure.
 V(graph_pre)$covid_cases <- covid_pre$totale_casi_pre
 V(graph_pre)$covid_deaths <- covid_pre$deceduti_pre
 V(graph_pre)$population <- provinces$Popolazione
@@ -50,49 +52,56 @@ gc_mid_net <- intergraph::asNetwork(gc_mid)
 gc_post_net <- intergraph::asNetwork(gc_post)
 
 # First attempt with all vertex features and only edges
-gc_pre_model <- ergm(gc_pre_net ~ edges+ nodecov('covid_cases') + nodecov('covid_deaths') + 
+gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
                        nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities'))
+                       nodecov('municipalities') + nodematch('region', diff=F) +
+                       nodecov('in_strength') + nodecov('out_strength'))
 summary(gc_pre_model)
 
-gc_mid_model <- ergm(gc_mid_net ~ edges+ nodecov('covid_cases') + nodecov('covid_deaths') + 
+gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
                        nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities'))
+                       nodecov('municipalities') + nodematch('region', diff=F) +
+                       nodecov('in_strength') + nodecov('out_strength'))
 summary(gc_mid_model)
 
-gc_post_model <- ergm(gc_post_net ~ edges+ nodecov('covid_cases') + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities'))
+gc_post_model <- ergm(gc_post_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
+                        nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
+                        nodecov('municipalities') + nodematch('region', diff=F) +
+                        nodecov('in_strength') + nodecov('out_strength'))
 summary(gc_post_model)
 
 
 # Second attempt with only significant vertex features from previous analysis and only edges
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_deaths') +  nodecov('population'))
+gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_deaths') +  nodecov('population') +
+                       nodecov('pop_density') + nodematch('region', diff=F))
 summary(gc_pre_model)
 
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + nodecov('population'))
+gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + nodecov('population') +
+                       nodecov('pop_density') + nodematch('region', diff=F))
 summary(gc_mid_model)
 
-gc_post_model <- ergm(gc_post_net ~ edges + nodecov('covid_deaths') + nodecov('population'))
+gc_post_model <- ergm(gc_post_net ~ edges + nodecov('covid_deaths') + nodecov('population') +
+                        nodecov('pop_density') + nodematch('region', diff=F))
 summary(gc_post_model)
 
 # Third attempt with only significant vertex features from previous analysis and some statistics of the graphs
 gc_pre_model <- ergm(gc_pre_net ~ edges + idegree1.5 + odegree1.5 + transitive + mutual
-                     + nodecov('covid_deaths') +  nodecov('population'))
+                     + nodecov('covid_deaths') +  nodecov('population') +
+                       nodecov('pop_density') + nodematch('region', diff=F))
 summary(gc_pre_model)
 mcmc.diagnostics(gc_pre_model)
 
 gc_mid_model <- ergm(gc_pre_net ~ edges + idegree1.5 + odegree1.5 + transitive + mutual
-                     + nodecov('covid_deaths') +  nodecov('population'))
+                     + nodecov('covid_deaths') +  nodecov('population') +
+                       nodecov('pop_density') + nodematch('region', diff=F))
 summary(gc_mid_model)
 mcmc.diagnostics(gc_mid_model)
 
 gc_post_model <- ergm(gc_pre_net ~ edges + idegree1.5 + odegree1.5 + transitive + mutual
-                      + nodecov('covid_deaths') +  nodecov('population'))
+                      + nodecov('covid_deaths') +  nodecov('population') +
+                        nodecov('pop_density') + nodematch('region', diff=F))
 summary(gc_post_model)
 mcmc.diagnostics(gc_post_model)
-
-??'ergm-terms'
 
 degree
 idegree
@@ -101,3 +110,19 @@ odegree
 odegree1.5 
 transitive 
 mutual
+
+in_strength
+out_strength
+covid_cases
+covid_deaths
+population
+surface
+pop_density
+municipalities
+region
+
+weight
+length_km
+
+edges
+absdiff()
