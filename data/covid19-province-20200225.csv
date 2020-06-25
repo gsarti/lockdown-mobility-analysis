@@ -1,108 +1,111 @@
-,data,denominazione_regione,denominazione_provincia,totale_casi,deceduti
-0,2020-02-25T18:00:00,Abruzzo,Chieti,0,0
-1,2020-02-25T18:00:00,Abruzzo,L'Aquila,0,0
-2,2020-02-25T18:00:00,Abruzzo,Pescara,0,0
-3,2020-02-25T18:00:00,Abruzzo,Teramo,0,0
-4,2020-02-25T18:00:00,Basilicata,Matera,0,0
-5,2020-02-25T18:00:00,Basilicata,Potenza,0,0
-6,2020-02-25T18:00:00,P.A. Bolzano,Bolzano,1,0
-7,2020-02-25T18:00:00,Calabria,Catanzaro,0,0
-8,2020-02-25T18:00:00,Calabria,Cosenza,0,0
-9,2020-02-25T18:00:00,Calabria,Crotone,0,0
-10,2020-02-25T18:00:00,Calabria,Reggio di Calabria,0,0
-11,2020-02-25T18:00:00,Calabria,Vibo Valentia,0,0
-12,2020-02-25T18:00:00,Campania,Avellino,0,0
-13,2020-02-25T18:00:00,Campania,Benevento,0,0
-14,2020-02-25T18:00:00,Campania,Caserta,0,0
-15,2020-02-25T18:00:00,Campania,Napoli,0,0
-16,2020-02-25T18:00:00,Campania,Salerno,0,0
-17,2020-02-25T18:00:00,Emilia-Romagna,Bologna,0,0
-18,2020-02-25T18:00:00,Emilia-Romagna,Ferrara,0,0
-19,2020-02-25T18:00:00,Emilia-Romagna,ForlÃ¬-Cesena,0,0
-20,2020-02-25T18:00:00,Emilia-Romagna,Modena,3,0
-21,2020-02-25T18:00:00,Emilia-Romagna,Parma,4,0
-22,2020-02-25T18:00:00,Emilia-Romagna,Piacenza,18,0
-23,2020-02-25T18:00:00,Emilia-Romagna,Ravenna,0,0
-24,2020-02-25T18:00:00,Emilia-Romagna,Reggio nell'Emilia,0,0
-25,2020-02-25T18:00:00,Emilia-Romagna,Rimini,1,0
-26,2020-02-25T18:00:00,Friuli Venezia Giulia,Gorizia,0,0
-27,2020-02-25T18:00:00,Friuli Venezia Giulia,Pordenone,0,0
-28,2020-02-25T18:00:00,Friuli Venezia Giulia,Trieste,0,0
-29,2020-02-25T18:00:00,Friuli Venezia Giulia,Udine,0,0
-30,2020-02-25T18:00:00,Lazio,Frosinone,0,0
-31,2020-02-25T18:00:00,Lazio,Latina,0,0
-32,2020-02-25T18:00:00,Lazio,Rieti,0,0
-33,2020-02-25T18:00:00,Lazio,Roma,3,0
-34,2020-02-25T18:00:00,Lazio,Viterbo,0,0
-35,2020-02-25T18:00:00,Liguria,Genova,0,0
-36,2020-02-25T18:00:00,Liguria,Imperia,0,0
-37,2020-02-25T18:00:00,Liguria,La Spezia,0,0
-38,2020-02-25T18:00:00,Liguria,Savona,1,0
-39,2020-02-25T18:00:00,Lombardia,Bergamo,18,9
-40,2020-02-25T18:00:00,Lombardia,Brescia,0,9
-41,2020-02-25T18:00:00,Lombardia,Como,0,9
-42,2020-02-25T18:00:00,Lombardia,Cremona,53,9
-43,2020-02-25T18:00:00,Lombardia,Lecco,0,9
-44,2020-02-25T18:00:00,Lombardia,Lodi,125,9
-45,2020-02-25T18:00:00,Lombardia,Mantova,0,9
-46,2020-02-25T18:00:00,Lombardia,Milano,8,9
-47,2020-02-25T18:00:00,Lombardia,Monza e della Brianza,3,9
-48,2020-02-25T18:00:00,Lombardia,Pavia,27,9
-49,2020-02-25T18:00:00,Lombardia,Sondrio,1,9
-50,2020-02-25T18:00:00,Lombardia,Varese,0,9
-51,2020-02-25T18:00:00,Marche,Ancona,0,0
-52,2020-02-25T18:00:00,Marche,Ascoli Piceno,0,0
-53,2020-02-25T18:00:00,Marche,Fermo,0,0
-54,2020-02-25T18:00:00,Marche,Macerata,0,0
-55,2020-02-25T18:00:00,Marche,Pesaro e Urbino,0,0
-56,2020-02-25T18:00:00,Molise,Campobasso,0,0
-57,2020-02-25T18:00:00,Molise,Isernia,0,0
-58,2020-02-25T18:00:00,Piemonte,Alessandria,0,0
-59,2020-02-25T18:00:00,Piemonte,Asti,0,0
-60,2020-02-25T18:00:00,Piemonte,Biella,0,0
-61,2020-02-25T18:00:00,Piemonte,Cuneo,0,0
-62,2020-02-25T18:00:00,Piemonte,Novara,0,0
-63,2020-02-25T18:00:00,Piemonte,Torino,3,0
-64,2020-02-25T18:00:00,Piemonte,Verbano-Cusio-Ossola,0,0
-65,2020-02-25T18:00:00,Piemonte,Vercelli,0,0
-66,2020-02-25T18:00:00,Puglia,Bari,0,0
-67,2020-02-25T18:00:00,Puglia,Barletta-Andria-Trani,0,0
-68,2020-02-25T18:00:00,Puglia,Brindisi,0,0
-69,2020-02-25T18:00:00,Puglia,Foggia,0,0
-70,2020-02-25T18:00:00,Puglia,Lecce,0,0
-71,2020-02-25T18:00:00,Puglia,Taranto,0,0
-72,2020-02-25T18:00:00,Sardegna,Cagliari,0,0
-73,2020-02-25T18:00:00,Sardegna,Nuoro,0,0
-74,2020-02-25T18:00:00,Sardegna,Oristano,0,0
-75,2020-02-25T18:00:00,Sardegna,Sassari,0,0
-76,2020-02-25T18:00:00,Sardegna,Sud Sardegna,0,0
-77,2020-02-25T18:00:00,Sicilia,Agrigento,0,0
-78,2020-02-25T18:00:00,Sicilia,Caltanissetta,0,0
-79,2020-02-25T18:00:00,Sicilia,Catania,0,0
-80,2020-02-25T18:00:00,Sicilia,Enna,0,0
-81,2020-02-25T18:00:00,Sicilia,Messina,0,0
-82,2020-02-25T18:00:00,Sicilia,Palermo,3,0
-83,2020-02-25T18:00:00,Sicilia,Ragusa,0,0
-84,2020-02-25T18:00:00,Sicilia,Siracusa,0,0
-85,2020-02-25T18:00:00,Sicilia,Trapani,0,0
-86,2020-02-25T18:00:00,Toscana,Arezzo,0,0
-87,2020-02-25T18:00:00,Toscana,Firenze,1,0
-88,2020-02-25T18:00:00,Toscana,Grosseto,0,0
-89,2020-02-25T18:00:00,Toscana,Livorno,0,0
-90,2020-02-25T18:00:00,Toscana,Lucca,0,0
-91,2020-02-25T18:00:00,Toscana,Massa Carrara,0,0
-92,2020-02-25T18:00:00,Toscana,Pisa,0,0
-93,2020-02-25T18:00:00,Toscana,Pistoia,1,0
-94,2020-02-25T18:00:00,Toscana,Prato,0,0
-95,2020-02-25T18:00:00,Toscana,Siena,0,0
-96,2020-02-25T18:00:00,P.A. Trento,Trento,0,0
-97,2020-02-25T18:00:00,Umbria,Perugia,0,0
-98,2020-02-25T18:00:00,Umbria,Terni,0,0
-99,2020-02-25T18:00:00,Valle d'Aosta,Aosta,0,0
-100,2020-02-25T18:00:00,Veneto,Belluno,0,1
-101,2020-02-25T18:00:00,Veneto,Padova,30,1
-102,2020-02-25T18:00:00,Veneto,Rovigo,0,1
-103,2020-02-25T18:00:00,Veneto,Treviso,1,1
-104,2020-02-25T18:00:00,Veneto,Venezia,7,1
-105,2020-02-25T18:00:00,Veneto,Verona,0,1
-106,2020-02-25T18:00:00,Veneto,Vicenza,0,1
+﻿;data;denominazione_regione;denominazione_provincia;totale_casi;deceduti
+0;2020-02-25T18:00:00;Abruzzo;Chieti;0;0
+1;2020-02-25T18:00:00;Abruzzo;L'Aquila;0;0
+2;2020-02-25T18:00:00;Abruzzo;Pescara;0;0
+3;2020-02-25T18:00:00;Abruzzo;Teramo;0;0
+4;2020-02-25T18:00:00;Basilicata;Matera;0;0
+5;2020-02-25T18:00:00;Basilicata;Potenza;0;0
+6;2020-02-25T18:00:00;P.A. Bolzano;Bolzano;1;0
+7;2020-02-25T18:00:00;Calabria;Catanzaro;0;0
+8;2020-02-25T18:00:00;Calabria;Cosenza;0;0
+9;2020-02-25T18:00:00;Calabria;Crotone;0;0
+10;2020-02-25T18:00:00;Calabria;Reggio di Calabria;0;0
+11;2020-02-25T18:00:00;Calabria;Vibo Valentia;0;0
+12;2020-02-25T18:00:00;Campania;Avellino;0;0
+13;2020-02-25T18:00:00;Campania;Benevento;0;0
+14;2020-02-25T18:00:00;Campania;Caserta;0;0
+15;2020-02-25T18:00:00;Campania;Napoli;0;0
+16;2020-02-25T18:00:00;Campania;Salerno;0;0
+17;2020-02-25T18:00:00;Emilia-Romagna;Bologna;0;0
+18;2020-02-25T18:00:00;Emilia-Romagna;Ferrara;0;0
+19;2020-02-25T18:00:00;Emilia-Romagna;ForlÃ¬-Cesena;0;0
+20;2020-02-25T18:00:00;Emilia-Romagna;Modena;3;0
+21;2020-02-25T18:00:00;Emilia-Romagna;Parma;4;0
+22;2020-02-25T18:00:00;Emilia-Romagna;Piacenza;18;0
+23;2020-02-25T18:00:00;Emilia-Romagna;Ravenna;0;0
+24;2020-02-25T18:00:00;Emilia-Romagna;Reggio nell'Emilia;0;0
+25;2020-02-25T18:00:00;Emilia-Romagna;Rimini;1;0
+26;2020-02-25T18:00:00;Friuli Venezia Giulia;Gorizia;0;0
+27;2020-02-25T18:00:00;Friuli Venezia Giulia;Pordenone;0;0
+28;2020-02-25T18:00:00;Friuli Venezia Giulia;Trieste;0;0
+29;2020-02-25T18:00:00;Friuli Venezia Giulia;Udine;0;0
+30;2020-02-25T18:00:00;Lazio;Frosinone;0;0
+31;2020-02-25T18:00:00;Lazio;Latina;0;0
+32;2020-02-25T18:00:00;Lazio;Rieti;0;0
+33;2020-02-25T18:00:00;Lazio;Roma;3;0
+34;2020-02-25T18:00:00;Lazio;Viterbo;0;0
+35;2020-02-25T18:00:00;Liguria;Genova;0;0
+36;2020-02-25T18:00:00;Liguria;Imperia;0;0
+37;2020-02-25T18:00:00;Liguria;La Spezia;0;0
+38;2020-02-25T18:00:00;Liguria;Savona;1;0
+39;2020-02-25T18:00:00;Lombardia;Bergamo;18;9
+40;2020-02-25T18:00:00;Lombardia;Brescia;0;9
+41;2020-02-25T18:00:00;Lombardia;Como;0;9
+42;2020-02-25T18:00:00;Lombardia;Cremona;53;9
+43;2020-02-25T18:00:00;Lombardia;Lecco;0;9
+44;2020-02-25T18:00:00;Lombardia;Lodi;125;9
+45;2020-02-25T18:00:00;Lombardia;Mantova;0;9
+46;2020-02-25T18:00:00;Lombardia;Milano;8;9
+47;2020-02-25T18:00:00;Lombardia;Monza e della Brianza;3;9
+48;2020-02-25T18:00:00;Lombardia;Pavia;27;9
+49;2020-02-25T18:00:00;Lombardia;Sondrio;1;9
+50;2020-02-25T18:00:00;Lombardia;Varese;0;9
+51;2020-02-25T18:00:00;Marche;Ancona;0;0
+52;2020-02-25T18:00:00;Marche;Ascoli Piceno;0;0
+53;2020-02-25T18:00:00;Marche;Fermo;0;0
+54;2020-02-25T18:00:00;Marche;Macerata;0;0
+55;2020-02-25T18:00:00;Marche;Pesaro e Urbino;0;0
+56;2020-02-25T18:00:00;Molise;Campobasso;0;0
+57;2020-02-25T18:00:00;Molise;Isernia;0;0
+58;2020-02-25T18:00:00;Piemonte;Alessandria;0;0
+59;2020-02-25T18:00:00;Piemonte;Asti;0;0
+60;2020-02-25T18:00:00;Piemonte;Biella;0;0
+61;2020-02-25T18:00:00;Piemonte;Cuneo;0;0
+62;2020-02-25T18:00:00;Piemonte;Novara;0;0
+63;2020-02-25T18:00:00;Piemonte;Torino;3;0
+64;2020-02-25T18:00:00;Piemonte;Verbano-Cusio-Ossola;0;0
+65;2020-02-25T18:00:00;Piemonte;Vercelli;0;0
+66;2020-02-25T18:00:00;Puglia;Bari;0;0
+67;2020-02-25T18:00:00;Puglia;Barletta-Andria-Trani;0;0
+68;2020-02-25T18:00:00;Puglia;Brindisi;0;0
+69;2020-02-25T18:00:00;Puglia;Foggia;0;0
+70;2020-02-25T18:00:00;Puglia;Lecce;0;0
+71;2020-02-25T18:00:00;Puglia;Taranto;0;0
+72;2020-02-25T18:00:00;Sardegna;Cagliari;0;0
+73;2020-02-25T18:00:00;Sardegna;Carbonia-Iglesias;0;0
+;2020-02-25T18:00:00;Sardegna;Medio Campidano;0;0
+74;2020-02-25T18:00:00;Sardegna;Nuoro;0;0
+75;2020-02-25T18:00:00;Sardegna;Ogliastra;0;0
+;2020-02-25T18:00:00;Sardegna;Olbia-Tempio;0;0
+76;2020-02-25T18:00:00;Sardegna;Oristano;0;0
+;2020-02-25T18:00:00;Sardegna;Sassari;0;0
+77;2020-02-25T18:00:00;Sicilia;Agrigento;0;0
+78;2020-02-25T18:00:00;Sicilia;Caltanissetta;0;0
+79;2020-02-25T18:00:00;Sicilia;Catania;0;0
+80;2020-02-25T18:00:00;Sicilia;Enna;0;0
+81;2020-02-25T18:00:00;Sicilia;Messina;0;0
+82;2020-02-25T18:00:00;Sicilia;Palermo;3;0
+83;2020-02-25T18:00:00;Sicilia;Ragusa;0;0
+84;2020-02-25T18:00:00;Sicilia;Siracusa;0;0
+85;2020-02-25T18:00:00;Sicilia;Trapani;0;0
+86;2020-02-25T18:00:00;Toscana;Arezzo;0;0
+87;2020-02-25T18:00:00;Toscana;Firenze;1;0
+88;2020-02-25T18:00:00;Toscana;Grosseto;0;0
+89;2020-02-25T18:00:00;Toscana;Livorno;0;0
+90;2020-02-25T18:00:00;Toscana;Lucca;0;0
+91;2020-02-25T18:00:00;Toscana;Massa Carrara;0;0
+92;2020-02-25T18:00:00;Toscana;Pisa;0;0
+93;2020-02-25T18:00:00;Toscana;Pistoia;1;0
+94;2020-02-25T18:00:00;Toscana;Prato;0;0
+95;2020-02-25T18:00:00;Toscana;Siena;0;0
+96;2020-02-25T18:00:00;P.A. Trento;Trento;0;0
+97;2020-02-25T18:00:00;Umbria;Perugia;0;0
+98;2020-02-25T18:00:00;Umbria;Terni;0;0
+99;2020-02-25T18:00:00;Valle d'Aosta;Aosta;0;0
+100;2020-02-25T18:00:00;Veneto;Belluno;0;1
+101;2020-02-25T18:00:00;Veneto;Padova;30;1
+102;2020-02-25T18:00:00;Veneto;Rovigo;0;1
+103;2020-02-25T18:00:00;Veneto;Treviso;1;1
+104;2020-02-25T18:00:00;Veneto;Venezia;7;1
+105;2020-02-25T18:00:00;Veneto;Verona;0;1
+106;2020-02-25T18:00:00;Veneto;Vicenza;0;1
