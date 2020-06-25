@@ -6,7 +6,14 @@ Analysis of shifts in mobility patterns during Italy's COVID-19 lockdown. Built 
 
 See [`data/README.md`](data/README.md) for specifications about the data used.
 
+### Visualizing Mobility Shifts
+
 <img src="img/lockdown_mobility.gif" alt="Mobility in Italy during the 2020 COVID-19 Lockdown" width=500px>
+
+### Simulating Mobility Shifts Progression in the Future
+
+<img src="img/stergm_sim.gif" alt="Simulation of Italy's mobility after the COVID-19 pandemic">
+
 
 ## Guidelines
 

@@ -71,8 +71,6 @@ gc_pre$layout <- cbind(V(gc_pre)$x, V(gc_pre)$y)
 gc_mid$layout <- cbind(V(gc_mid)$x, V(gc_mid)$y)
 gc_post$layout <- cbind(V(gc_post)$x, V(gc_post)$y)
 
-
-
 # Modelling
 gc_pre_net <- intergraph::asNetwork(gc_pre)
 gc_mid_net <- intergraph::asNetwork(gc_mid)
