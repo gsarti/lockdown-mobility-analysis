@@ -84,11 +84,6 @@ V(graph_pre)$betweenness <- igraph::betweenness(graph_pre,weights = E(graph_pre)
 V(graph_mid)$betweenness  <- igraph::betweenness(graph_mid, weights = E(graph_mid)$inverted_weight)
 V(graph_post)$betweenness  <- igraph::betweenness(graph_post, weights =  E(graph_post)$inverted_weight)
 
-# Closeness is not well defined for disconnected graphs
-# cls_pre <- igraph::closeness(graph_pre,weights = E(graph_pre)$inverted_weight )
-# cls_mid <- igraph::closeness(graph_mid, weights = E(graph_mid)$inverted_weight  )
-# cls_post <- igraph::closeness(graph_post, weights =  E(graph_post)$inverted_weight)
-
 # Eigenvector centrality
 eig_pre <- igraph::eigen_centrality(graph_pre,weights = E(graph_pre)$inverted_weight)
 eig_mid <- igraph::eigen_centrality(graph_mid, weights = E(graph_mid)$inverted_weight)

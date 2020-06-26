@@ -48,6 +48,27 @@ sub_group_pre <- subgraph(graph_pre,group_pre)
 sub_group_mid <- subgraph(graph_mid,group_mid)
 sub_group_post <- subgraph(graph_post,group_post)
 
+
+# # The pre-lockdown and the post-lockdown giant components are connected so we can calculate the closeness
+# igraph::is.connected(sub_group_pre,mode = "strong")
+# igraph::is.connected(sub_group_mid,mode = "strong")
+# igraph::is.connected(sub_group_post,mode = "strong")
+# 
+# # Obtain weights that reflects distance, so the inverse of the "strength" or "popularity" of nodes
+# E(sub_group_pre)$inverted_weight <- (1/E(sub_group_pre)$weight*10000) 
+# E(sub_group_post)$inverted_weight <- (1/E(sub_group_post)$weight*10000)
+# 
+# # Closeness on giant components, it isn't infomrative since all nodes have basically the same values
+# # for this measure. The difference between the first and the last graph is only the order of magnitude,
+# # that decreases
+# clos_sub_pre<- igraph::closeness(sub_group_pre,weights = E(sub_group_pre)$inverted_weight )
+# clos_sub_post <- igraph::closeness(sub_group_post, weights =  E(sub_group_post)$inverted_weight)
+# par(mfrow=c(1,2))
+# plot_single_weighted_graph(sub_group_pre, v_attr = clos_sub_pre* 10000)
+# plot_single_weighted_graph(sub_group_post, v_attr = clos_sub_post* 10000 )
+
+
+
 # Checking the "smallworld" property on giant components
 # A network can be said "smallworld" if its smallworldness is higher 
 # than one (a stricter rule is smallworldness>=3; Humphries & Gurney, 2008).
