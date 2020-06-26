@@ -45,6 +45,25 @@ graph_pre <- create_graph_from_data(mobility_pre, metric="n", loops=F, zeros = F
 graph_mid <- create_graph_from_data(mobility_mid, metric="n", loops=F, zeros = F)
 graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros = F)
 
+# Initial measures of graph structure
+dyad_census(graph_pre)
+dyad_census(graph_mid)
+dyad_census(graph_post)
+length(triangles(graph_pre))
+length(triangles(graph_mid))
+length(triangles(graph_post))
+length(V(graph_pre))
+length(V(graph_mid))
+length(V(graph_post))
+length(E(graph_pre))
+length(E(graph_mid))
+length(E(graph_post))
+
+# Diameter on inverted weights ~ distances
+diameter(graph_pre, directed = TRUE, weights=1/E(graph_pre)$weight )
+diameter(graph_mid, directed = TRUE, weights=1/E(graph_mid)$weight)
+diameter(graph_post, directed = TRUE, weights=1/E(graph_post)$weight)
+
 # Degree centrality for the 3 graphs
 
 V(graph_pre)$deg <- igraph::degree(graph_pre) 
@@ -176,5 +195,4 @@ igraph::is.connected(sub_post_weight_up, mode = "strong")
 igraph::components(sub_pre_weight_up, mode = "weak")
 igraph::components(sub_mid_weight_up, mode = "weak")
 igraph::components(sub_post_weight_up, mode = "weak")
-
-
+                                                           

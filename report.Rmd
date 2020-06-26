@@ -1,7 +1,7 @@
 ---
 title: "**Analyzing the Impact of Italy's COVID-19 Lockdown on National Mobility Networks**"
 subtitle: "Final project for the Social Network Analysis course"
-abstract: "The aim of this project report is to analyze shifts in mobility patterns during Italy's COVID-19 lockdown. More specifically, we consider the Italian mobility network for three specific days during the COVID-19 pandemic outbreak: the beginning of the **first local lockdown** in the Lodi province (25/02/2020), the beginning of **nation-scale lockdown** (03/10/2020) and the **end of nation-scale lockdown** at regional level (05/05/2020). We perform a diachronic descriptive analysis of the mobility network, apply community detection algorithms to highlight mobility shifts at a provincial level and model network connections by the mean of exponential random graphs (ERGs) to show the strong connection between mobility shifts and COVID-19 diffusion statistics. We conclude by comparing our results with the mobility reports publicly released by Google during the lockdown. Our code is available at [https://github.com/gsarti/lockdown-mobility-analysis](https://github.com/gsarti/lockdown-mobility-analysis)"
+abstract: "The aim of this project is to analyze shifts in mobility patterns during Italy's COVID-19 lockdown. More specifically, we consider the Italian mobility network for three specific days during the COVID-19 pandemic outbreak: the beginning of the **first local lockdown** in the Lodi province (Feb 25th, 2020), the beginning of **nation-scale lockdown** (March 10th, 2020) and the **end of nation-scale lockdown** at regional level (May 5th, 2020). We perform a diachronic descriptive analysis of the mobility network, we apply community detection algorithms to highlight mobility shifts at a provincial level and we model network connections by the mean of standard and time-aware exponential random graph models (ERGMs) to show the strong connection between mobility shifts and COVID-19 diffusion statistics. We conclude by comparing our results with the mobility reports publicly released by Google and Facebook during the lockdown. Our code is available at [https://github.com/gsarti/lockdown-mobility-analysis](https://github.com/gsarti/lockdown-mobility-analysis)"
 author: 
 - Gabriele Sarti
 - Enrico Fallacara
@@ -32,41 +32,59 @@ graph_post <- create_graph_from_data(mobility_post, metric="n", loops=F, zeros =
 graph_pre_all <- create_graph_from_data(mobility_pre, metric="n", zeros=F)
 graph_mid_all <- create_graph_from_data(mobility_mid, metric="n", zeros=F)
 graph_post_all <- create_graph_from_data(mobility_post, metric="n", zeros=F)
+
+line2user <- function(line, side) {
+  lh <- par('cin')[2] * par('cex') * par('lheight')
+  x_off <- diff(grconvertX(0:1, 'inches', 'user'))
+  y_off <- diff(grconvertY(0:1, 'inches', 'user'))
+  switch(side,
+         `1` = par('usr')[3] - line * y_off * lh,
+         `2` = par('usr')[1] - line * x_off * lh,
+         `3` = par('usr')[4] + line * y_off * lh,
+         `4` = par('usr')[2] + line * x_off * lh,
+         stop("side must be 1, 2, 3, or 4", call.=FALSE))
+}
 ```
 
 ## Introduction
 
-The nation-level lockdown implemented by the Italian Government in order to prevent the spreading of the COVID-19 disease in 2020 greatly affected the mobility patterns of roughly 60 millions of Italian citizens and residents. The Italian lockdown was composed by several subsequent phases of tightening and loosening of restrictions, with three most relevant dates arguably being:
+The nation-level lockdown implemented by the Italian Government in order to prevent the spreading of the COVID-19 disease in 2020 greatly affected the mobility patterns of roughly 60 millions Italian citizens and residents. The Italian lockdown was achieved through a sequence of phases characterized by tightening and loosening of restrictions, with the three most relevant dates being:
 
 - The **first lockdown** of ten municipalities of the province of Lodi, forming the first *zona rossa*, shortly after February 21st, 2020.
 
-- The **national lockdown** that restricted travel at intra-municipal level, except for working necessities and family emergencies, on the evening of March 9th, 2020.
+- The **national lockdown** that restricted travel at intra-municipal level ( except for working necessities and family emergencies) on the evening of March 9th, 2020.
 
-- The **reopening of inter-regional travel** that took place from May 5th, 2020.
+- The **reopening of inter-regional travel** that took place from May 5th, 2020, after a significant drop in the number of positive cases and daily fatalities.
 
-In this report, we analyze how the Italian mobility trends have changed during the three phases defined by the aforementioned dates using a dataset containing raw movements *WAIT FOR SPECIFICATIONS* at a macro-scale level. We begin by presenting data and preprocessing steps that were taken in order to perform the analysis in [\textcolor{blue}{Section 1}](#data). [\textcolor{blue}{Section 2}](#desc-anal) contains a diachronic descriptive analysis of the mobility network that highlights shared and different properties of the networks through time. In [\textcolor{blue}{Section 3}](#comm-det), we apply highlight mobility shifts at a provincial level by the means of well-established community detection algorithms. [\textcolor{blue}{Section 4}](#modeling) contains our efforts in modeling the mobility network by the means of exponential random graphs (ERGs) to show the strong connection between mobility shifts and COVID-19 spreading statistics. We conclude in [\textcolor{blue}{Section 5}](#conclusion) by comparing our results with the mobility reports publicly released by Google during the lockdown and summarizing our findings.
+In this report, we analyze how the Italian mobility trends have shifted during the three phases defined by those dates using a dataset containing raw movements of users of the Facebook platform collected between February and May 2020 at a macro-scale level. We begin by presenting data and preprocessing steps that were taken in order to perform the analysis in Section  [\textcolor{blue}{1}](#data). Section [\textcolor{blue}{2}](#desc-anal) contains a diachronic descriptive analysis of the mobility network that highlights shared and different properties of the mobility networks through time. In Section [\textcolor{blue}{3}](#comm-det), we highlight mobility shifts at a provincial level by the means of well-established community detection algorithms. Section [\textcolor{blue}{4}](#modeling) depicts our efforts in modeling the mobility network by the means of exponential random graph models (ERGMs) and temporal exponential random graph models (TERGMs) to show the connection between mobility shifts and COVID-19 spreading statistics. We conclude our study in Section [\textcolor{blue}{5}](#conclusion) by comparing our results with the mobility reports publicly released by Google and Facebook during the lockdown and summarizing our findings.
+
+![Mobility in Italy during the three phases of the Italian lockdown. Left to right: Feb. 25th, March 10th, May 5th. Vertex colors and sizes represent regional membership and total inbound mobility respectively. Edge color intensity expressing mobility strength. Red edges connect provinces belonging to different regions.](img/pre_mid_post.png){#fig:mobility-viz} 
 
 ## [1. Data and Preprocessing]{#data}
 
-The datasets contains the estimated raw number of movements *n* in 3 days during the Covid crisis, filtered by country = IT. The 3 days refers to  In this dataset are present different metric to estimate movements, we have selected the metric *n* because it represents a kind of measure of popularity.
+For our analysis, we leveraged the Movement Range Maps data[^1] published by Facebook on the Humanitarian Data Exchange platform. These data contain movement changes as measured in multiple countries by Facebook during the COVID-19 pandemic. More specifically, we focused only the data available for the Italian mobility network in three specific dates: February 25th (during Lodi red-zoning), March 10th (first day of national lockdown) and May 5th (first day of national reopening). 
+
+[^1]: https://data.humdata.org/dataset/movement-range-maps
+
+For our analysis, we considered only raw estimated movements at provincial level and focused mostly on the analysis of **inter-provincial movements**, since they were the most affected by the lockdown procedure: it should be assumed that we are presenting data about inter-provincial movements only except where explicitly stated.  Raw movements metric were chosen as our main metric as they are intrinsically related to the popularity of actors in the mobility network (i.e. Italian provinces), making them especially suited for standard network analysis methodologies. It is important to note that some movements in the dataset were approximated to a null value for privacy reasons: we discarded them since they were not relevant for our macro-analysis of mobility phenomena.
+
+Since the original dataset presents mobility patterns at three moments of the day (12AM, 8AM and 4PM respectively), we average raw movement values across the three periods to obtain a general mobility measure for each connection between provinces across the entire day. We note that movement values were generally evenly distributed across various moments of the day, with a slight prevalence of movements at 4PM for all the inspected days.
 
 ## [2. Diachronic Descriptive Analysis of Mobility Networks]{#desc-anal}
 
-A first insight is given by the sum of the movements in these 3 days. We notice that mobility doesn't change much allowing intra-provincial movements, since inter-province connections have values that are much lower than intra-province ones. Thus, removing the loops, allow us to see only inter-province movements and in this case the mobility is significantly lower:
+<!--The first insight is given by the sum of the movements in these 3 days. We notice that mobility doesn't change much allowing intra-provincial movements, since inter-province connections have values that are much lower than intra-province ones. Thus, removing the loops, allow us to see only inter-province movements and in this case the mobility is significantly lower:
 
 ```{r echo = FALSE}
 print(paste("Movements (inter-province): Pre", round(sum(E(graph_pre)$weight)), " -> Mid", 
             round(sum(E(graph_mid)$weight)), " -> Post", round(sum(E(graph_post)$weight))))
 ```
-A graphical representation of this phenomenon is given by the next figure.
+A graphical representation of this phenomenon is given by the next figure.-->
 
- \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ![](img/pre_mid_post.png) 
+We start our analysis by visualizing the connectivity of the mobility network through time. Figure [\textcolor{blue}{1}](#fig:mobility-viz) presents inter-provincial movements on Italian soil during three crucial moments of the pandemic. In all three cases, mobility networks are **directed**, **weighted** (accoriding to the raw mobility weight value) and **disconnected**.
 
-We restrict our attention to inter-province movments for the descriptive analysis, since they capture better the variation of mobility and the results for intra-province are empirically quite similar. The graphs are **directed**, **weighted** (accoriding to the metric value) and **disconnected** (this is valid for both implementations).
+<!--We restrict our attention to inter-province movments for the descriptive analysis, since they capture better the variation of mobility and the results for intra-province are empirically quite similar. The graphs are **directed**, **weighted** (accoriding to the metric value) and **disconnected** (this is valid for both implementations).-->
 
-From the in-degree and out-degree distribution of the 3 graphs, it is highlighted that the majority of nodes have degree between 1 and 10, with few nodes that assumes bigger values. We can notice that, for in-degree, large values tends to vanish and the distribution concentrates to small values, indicating that nodes loose their popularity through time. The same happens to the out-degree distribution, idicating that also expansiveness of nodes tends to reduce.
-
-```{r echo = FALSE, fig.height=2}
+```{r echo = FALSE, fig.height=2.5, fig.cap="\\label{fig:hist_degree} In-degree and out-degree distribution for nodes for the mobility network of February 25th and May 5th, considering only inter-provincial movements."}
 V(graph_pre)$deg <- igraph::degree(graph_pre) 
 V(graph_pre)$ideg <- igraph::degree(graph_pre, mode="in")   
 V(graph_pre)$odeg <- igraph::degree(graph_pre, mode="out")
@@ -80,70 +98,73 @@ V(graph_post)$ideg <- igraph::degree(graph_post, mode="in")
 V(graph_post)$odeg <- igraph::degree(graph_post, mode="out")
 
 par(mfrow=c(1,4))
-hist(get_attr(graph_pre, "ideg", "vertex"), xlab ="In-Degree distribution", ylab="# of Provinces", main = "Mobility pre lock.", breaks=15)
-hist(get_attr(graph_post, "ideg", "vertex"), xlab ="In-Degree distribution", ylab="# of Provinces", main = "Mobility post lock.", breaks=15)
-hist(get_attr(graph_pre, "odeg", "vertex"), xlab ="Out-Degree distribution", ylab="# of Provinces", main = "Mobility pre lock.", breaks=15)
-hist(get_attr(graph_post, "odeg", "vertex"), xlab ="Out-Degree distribution", ylab="# of Provinces", main = "Mobility post lock.", breaks=15)
-
+hist(get_attr(graph_pre, "ideg", "vertex"), xlab ="In-Degree distribution", ylab="# of Provinces", breaks=15, main="")
+hist(get_attr(graph_pre, "odeg", "vertex"), xlab ="Out-Degree distribution", ylab="# of Provinces", breaks=15, main="")
+text(line2user(line=mean(par('mar')[c(2, 2)]), side=2), 
+     line2user(line=2, side=3), 'Feb. 25th Mobility', xpd=NA, cex=1, font=2)
+hist(get_attr(graph_post, "ideg", "vertex"), xlab ="In-Degree distribution", ylab="# of Provinces", breaks=15, ylim=c(0,40), main="")
+hist(get_attr(graph_post, "odeg", "vertex"), xlab ="Out-Degree distribution", ylab="# of Provinces", breaks=15, ylim=c(0,40), main="")
+text(line2user(line=mean(par('mar')[c(2, 3)]), side=2), 
+     line2user(line=2, side=3), 'May 5th Mobility', xpd=NA, cex=1, font=2)
 ```
 
-The **network density**, presented in Table 1, indicates, first, that the graph are **sparse**, since the very low values that assumes this quantity, and second, that the denisty reduces over time, indicating, like the in-degree and out-degree distributions, that the movements significantly decreases between the provinces through time.
+We note how the decrease in total mobility throughout the lockdown period affected the south-eastern and insular regions of Italy in particular, with most intra-regional connections being dropped after the first lockdown phase. On the other hand, provinces in Lombardy, Tuscany, Veneto, Emilia-Romagna, Lazio and Campania are the least affected. As of May 5th the Italian mobility network still seems heavily impacted by the lockdown and shows no apparent signs of regeneration.
 
-In order to implement centrality measures, we have to invert the weights of our graphs. This have to be done because actual weights represent a sort of strength measure between nodes, not a distance(cost) measure. After that we can calculate the **betweenness** and the **eigenvector centrality** for the graphs. Note that the closeness will be calculated later, because this measure is only meaningful in a connected graph.
+We proceed by analyzing the in-degree and the out-degree distribution of actors. Figure [\textcolor{blue}{2}](#fig:hist-degree) highlights the fact that a majority of nodes have a degree ranging between 1 and 10, with few nodes assuming larger values. We can notice that, with respect to in-degree, large values tends to vanish and the distribution concentrates to small values, indicating that nodes loose their popularity throughout the pandemic. The same happens to the out-degree distribution, idicating that also expansiveness of nodes is also affected.
 
-The betweenness remains practically the same in all the three graphs, apart from a few small variations. Hovewer in Lazio, Umbria and Abruzzo happens an interesting thing. Before lockdown, Rome has the largest value with respect to neighboring provinces, but as the time passes, its value tends to reduce and the other neighboring provinces tend to assume higher values. 
-This could indicate that Rome's tendency to influence movements (flows) is slightly lost in favor of its neighbors. 
+Table [\textcolor{blue}{1}](#tab:descriptive_analysis) presents a summary of multiple descriptive measures of the mobility network through time. Low values assumed by **network density** indicate that the graph is **sparse** at all times, but the slight decrease through time seems to support the decrease in overall movements we first presented in Figure [\textcolor{blue}{1}](#fig:mobility-viz). We can also observe that the decrease over time in all edge-related values (# movements, # edges, dyad counts, triangles) is related to an increase in the longest geodesic (i.e. the diameter, computed over inverted raw movements). This can be interpreted as provinces becoming increasingly loosely-knit through the pandemic.
 
-*CITARE PLOT BTWN SUBGRAPH IN LAZIO,UMBRIA E ABRUZZO*
+For what concerns the **assortativity by degree** measure, we can see that its value for the network increases through time, starting at $0.134$ on February 25th and reaching a value of $0.326$ on May 5th. Since the measure indicates the tendency of nodes having similar degree to connect with each other, this could indicate a clustering of movements across provinces of the same size, reducing the movement from small to large ones.
 
-Eigenvector centrality shows that there is a loss of influence over the whole network by provinces 
-in the provice of northern and southern Italy, while in central Italy the situation remains almost completely unchanged, despite a slight decrease in values.
-
-*CITARE PLOT EIGE_VECT SUBGRAPH IN TUTTA ITALIA*
-
-For what it concerns about **assortativity by degree**, we calculate this measure for the graphs and, as reported in Table 1, we can see that in the mobility pre-lockdown we have a small positive value of $0.134$ that indicates the sligth tendency of nodes of similar degree to connect with each others. An interesting fact is that this measure increases through time, reaching a value of $0.326$. This could indicate that the movements have concentrated more between provinces of the same degree, reducing the movement from "small" to "large" ones.
+Table [\textcolor{blue}{1}](#tab:descriptive_analysis) shows how **transitivity** measures for the whole network tend to stay roughly the same through the lockdown phases. Thus, to inspect better this property, we calculate this measure on two subgraphs obtained placing a $\text{threshold}_w = 500$ on edge weights, i.e. considering only connections among provinces that see at least 500 raw movements in a portion of the day. The threshold value was selected by looking at the distribution of weights in the network, noticing that most edges have weights between $0$ to $500$. The subgraphs of nodes below the threshold shows a transitivity (Transitivity sub. lower) that is slightly smaller that the global value and hardly varies through time. On the other hand, the subgraph containing only edges above $\text{threshold}_w$ shows a significant increment of $0.10$ in its transitivity value (Transitivity sub. upper). This can be interpreted as the tendency of big provinces to increase their number of connections throughout the three phases of the lockdown. Transitivity was also computed for the $k$-cores of the graph, where $k=8$ is the minimum value between the coreness values for the three networks (note that only the Feb. 25th network has a value of $k$ bigger than the one we selected, with coreness equal to $10$). The transitivity calculated on these maximal subgraphs has a significant decrease of $0.18$, as we expected, indicating that these subnetworks underwent a significant loss in terms of cohesion through time.
 
 \begin{table}
 \begin{center}
 \begin{tabular}{l@{\qquad}ccc@{\qquad}ccc}
 \toprule
-& \multicolumn{1}{c}{\textbf{Pre-lock.}} & \multicolumn{1}{c}{\textbf{Mid-lock.}} & \multicolumn{1}{c}{\textbf{Post lock.}} \\
+& \multicolumn{1}{c}{\textbf{Feb. 25th}} & \multicolumn{1}{c}{\textbf{March 10th}} & \multicolumn{1}{c}{\textbf{May 5th}} \\
 \midrule
- Density & 0.05004170 & 0.03986656 & 0.03619683 \\
+\# of provinces & 110 & 110 & 110 \\
+\# of edges & 600 & 478 & 434 \\
+\# of movements & 119065 & 85258 & 68515 \\
+% mobility decrease & - & 30% & 43 % \\
 \midrule
-Assortativity by degree & 0.1343682  & 0.2511714  & 0.3258981 \\
+Density & .050 & .040 & .036 \\
+Diameter & .306 & .506 & .843 \\
+Dyad census (MAN) & 279/42/5674 & 230/18/5747 & 206/22/5767 \\
+\# of triangles & 918 & 492 & 423 \\
+Assortativity by degree & .134  & .251  & .326 \\
 \midrule
-Transitivity Glo. & 0.3863636  & 0.4052718  & 0.4171598  \\
-\midrule
-Transitivity sub. upper & 0.1714286  & 0.2068966 & 0.2727273 \\
-\midrule
-Transitivity sub. lower & 0.3148734  & 0.3176471  & 0.3448702  \\
-\midrule
-Transitivity k-cores & 0.7959184   & 0.6127321   & 0.6113208 \\
+Global transitivity & .386  & .405 & .417  \\
+Transitivity sub. upper & .171  & .206 & .272 \\
+Transitivity sub. lower & .315  & .317  & .345  \\
+Transitivity k-cores & .796 & .613 & .611 \\
 \bottomrule
 \end{tabular}
-\caption{Descrpitive analysis measures}
+\caption{Descrpitive analysis of the mobility network at different times of the Italian lockdown. We note how a sharp decrease in network connectivity leads to increased assortativity and transitivity measures. The diameter is computed using inverted edge weights ($1/\text{raw movements}$) as proxies for distance in communication.}
 \label{tab:descriptive_analysis}
 \end{center}
 \end{table}
 
-The **global clustering coefficient**, that refers to netowrk cohesion analysis, is calculated:
+We conclude our descriptive analysis of the network by inspecting node importance by the means of multiple centraliti indices. Since centrality measures treat edge weights as distances and not as connection strengths, weights need to be inverted in a fashion similar to the diameter computation in Table [\textcolor{blue}{1}](#tab:descriptive_analysis). We follow an approach suggested in the literature[@ozyer2019social], converting our raw movement weights $w$ into rescaled inverted movement weights $w'$ that can be used as proxies for distances.
 
- - **Globally**
- - on **subgraphs** in which all the nodes have a weight that is above or below a fixed **threshold**.
- - in  **k-cores components** of original graphs.
- 
-As reported in Table 1, the **transitivity** for the whole network tends to remain the same, except for a small increase that isn't significant. Thus, to inspect better this property, we calculate this measure on two subgraphs obtained placing a $threshold_w = 500$ on weights. The value that we choose is based on the distribution of weights in the network, noticing that most part of nodes  have weights that go from $0$ to $500$. As we can notice from the results presented in the table, for the subgraphs of nodes below the threshold, the transitivity, that is smaller with respect the global value, remains again pratically the same, instead for the other subgraph there is a significant increment of $0.10$. This could mean that big provinces tends to increase their connections through the three different phases of lockdown. We have also calculated this index on k-cores of the graph, selecting as k the minimum value between the three coreness value, resulting in $k = 8$ (notice that only the graph referred to the mobility pre-lockdown has a value of k bigger than the selected, with the coreness equal to $10$). The transitivity calculated on these maximal subgraphs has a significant decrease of $0.18$, as we expected, indicating that these subgraphs have a loss in terms of cohesion through the time.
+$$w' = \frac{1}{w}\times 10'000$$
 
-After this first descpritive analysis we can deduce that the decrease of movements caused by lock-down measures causes a loss of influence of the nodes in the whole network, with an increasing tendecy of similar degree nodes to connect with each others, indicating that movements from small provinces to large ones decrease, in favor of smaller and closer provinces, in terms of distance. The opposite happens for big provinces, movements from bigger to smaller reduce in favor of movements between big ones.
+We proceed by calculating the **betweenness** scores and the **eigenvector centrality** for nodes in the mobility network, leaving closeness for later since the network is disconnected.
 
+Betweenness remains practically the same in all graphs, besides few small variations. Hovewer, regions of Lazio, Umbria and Abruzzo show an interesting trend where Rome, which has the largest value with respect to neighboring provinces, suffers a decrease in betweenness through time while betweenness of its neighbors increases. Appendix [\textcolor{blue}{A}](#app:betweenness) visualizes this trend. This could indicate that Rome's tendency to influence movements (flows) is slightly lost in favor of its neighbors, a situation that can be motivated by the sudden shift towards remote work.
 
+**Eigenvector centrality** distribution shows that a loss of network influence for northern and southern provinces, while in central Italy the situation remains almost completely unchanged, despite a slight decrease in values. [\textcolor{blue}{B}](#app:eigenvector_centrality) visualizes this trend. We speculate that this can be a direct consequence of northern provinces being the most affected by the pandemic.
+
+We finally compute the **global clustering coefficient** to quantify network cohesion, both **globally**, on **subgraphs** above $\text{threshold}_w$ and on **k-cores components** of original graphs with $k=8$.
+
+To summarize, the decrease of movements caused by lock-down measures causes a loss of influence of the nodes in the whole network, with an increasing tendecy of similar degree nodes to connect with each others, indicating that movements from small provinces to large ones decreases in favor of smaller and geographically-closer provinces. The opposite happens for large provinces, with an increase in assortativity reflecting a decrease in mobility from large to small provinces reduce in favor of movements among large ones.
+
+![Mobility histograms representing the distribution of total inbound movements across provinces at various stages of the Italian lockdown.](img/hist_mobility.png){#fig:histo_mobility}
 
 ## [3. Analyzing Mobility Communities]{#comm-det}
 
-We limit ourselves to the analysis of `inbound_strength`, i.e. the sum of the weights of inbound edges to each node. Intuitively, it can be regarded as a proxy for the importance of the node inside the network. Figure [\textcolor{blue}{N}](#fig:histo_mobility) shows that movements across provinces follow a power law that is typical for those types of networks, with very few provinces accounting for most of the movements. We see from the histograms that the value of `inbound_strength` is much higher when accounting for intra-provincial movements. This is also evident in the visualizations of Appendix [\textcolor{blue}{X}](#app:eigenvector_centrality), where this value is used to  weight edge widths. While total movements don't seem to be affected, we can see a drop of roughly 30% in inter-provincial movements between February 25th and March 10th, with a further 13% decrease in mobility between March 10th and May 5th. These percentages match our intuition that inter-provincial mobility suffered the most from inter-regional lockdown measures.
-
-![Mobility histograms representing the distribution of total inbound movements across provinces at various stages of the Italian lockdown.](img/hist_mobility.png){#fig:histo_mobility}
+We limit ourselves to the analysis of `inbound_strength`, i.e. the sum of the weights of inbound edges to each node. Intuitively, it can be regarded as a proxy for the importance of the node inside the network. Figure [\textcolor{blue}{N}](#fig:histo_mobility) shows that movements across provinces follow a power law that is typical for those types of networks, with very few provinces accounting for most of the movements. We see from the histograms that the value of `inbound_strength` is much higher when accounting for intra-provincial movements. This is also evident in the visualizations of Appendix [\textcolor{blue}{X}](#app:eigenvector_centrality), where this value is used to  weight edge widths. While total movements don't seem to be affected, we can see a drop of roughly 30% in inter-provincial movements between February 25th and March 10th, with a further 13% decrease in mobility between March 10th and May 5th. These percentages match our intuition that inter-provincial mobility suffered the most from lockdown measures.
 
 We proceeded to compute and visualize the coreness of the network, as shown in Appendix [\textcolor{blue}{X}](#app:coreness). As expected, removing intra-provincial movements (looping edges) doesn't affect at all the coreness structure. From the coreness plots structure it is evident how north-eastern, southern and insular provinces have a much lower number of connections with respect to central (e.g. Tuscany) and north-western (e.g. Lombardy, Piedmont) ones. Calabrian and Sardinian provinces have the lowest number of connections.
 
@@ -175,9 +196,7 @@ For the second part of the community analysis, we proceeded only with the networ
 
 In Appendix [\textcolor{blue}{X}](#app:components) we show the similarity between the structure of cliques through time and the components found by considering network actors with weighted coreness rank > 2, i.e. with at least 1000 inter-provincial outbound movements at all times. This highlights the fact that most tight-knit communities are also the ones having the higher number of connections in general, reflecting the principle of preferential attachment which is commonly verified in many real-world social networks. This fact is also verified by the presence of a **small-worldness index** above 3 at all times, and a global transitivity that is significantly above chance. Both cliques and weighted coreness components highlight the centrality of Milan and its neighbouring provinces, Tuscany provinces and the Rome-Naples macro-region. Weighted coreness components further provide additional information by highlighting the high connectivity of Veneto and representing well the drop in connectivity during the lockdown.
 
-To conclude the section, we performed some community detection experiments leveraging two well-established algorithms. The **Girvan-Newman algorithm** finds communities by progressively removing edges based on their betweenness. Since edge weigths are interpreted as distances by the algorithm, we converted our raw movement weights $w$ following an approach suggested in the literature [@ozyer2019social, pp. 66]:
-
-$$w' = \frac{1}{w}\times 10'000$$
+To conclude the section, we performed some community detection experiments leveraging two well-established algorithms. The **Girvan-Newman algorithm** finds communities by progressively removing edges based on their betweenness.
 
 The **Label propagation algorithm**, instead, iteratively sets node community memberships based on the weighted most common membership across neighbouring nodes until convergence. This approach doesn't require inverting raw movements weights $w$ since larger edge weights correspond to stronger connections. Results produced by the two methods are presented descriptively in Table [\textcolor{blue}{X}](#tab:clustering) and visually in Appendix [\textcolor{blue}{X}](#app:clustering). We could not apply standard multi-level modularity optimization methods given the directed nature of our network.
 
@@ -207,13 +226,11 @@ The label propagation algorithm appears to be more effective at modeling the com
 
 ## [4. Modeling Mobility Patterns]{#modeling}
 
-
 In order to implement ERGMs on our networks, we decide to insert some **auxiliary data** that could allow us a better model fitting. These data came from two different dataset:
 
 - NOME DATASET, that contains informations about **population**, **population density**, **surface** and **municipalities**, aggregated at province level.
 
 - COVID-19 italian dataset, that contains informations about the numer of **covid cases** at province level and number of **covid deaths** at regional level.
-
 
 These variables are chosen because they can be significant in our analysis, as they could influence the movements between the different regions and/or provinces.
 
@@ -238,13 +255,42 @@ We notice an important thing: these 3 models shows a sort of *performance decay*
 
 
 
-
-
 ## [5. Discussion and Conclusion]{#conclusion}
+
+
+# References
+
+<div id="refs"></div>
 
 \blandscape
 
 # [Appendix]{#appendix}
+
+## [A. Shift in Betweenness Across Regions of Central Italy]{#app:betweenness}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/btw_regions.png}
+\caption{From left to right: Feb. 25th, March 10th and May 5th mobility situation of provinces belonging to the regions of Lazio, Umbria and Abruzzo. Edge transparency represent the number of raw movements, while vertex size represent the betweenness of nodes in the total network.}
+\end{center}
+\end{figure}
+
+\newpage
+
+## [B. Shift in Provinces Influence on Mobility During Italy Lockdown]{#app:eigenvector_centrality}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics{img/eig_vect_italy.png}
+\caption{From left to right: Feb. 25th, March 10th and May 5th mobility for provinces on the whole territory. Edge transparency represent the number of raw movements, while vertices sizes and colors represent the eigenvector centrality and the regional membership of nodes in the network.}
+\end{center}
+\end{figure}
+
+\newpage
 
 ## [A. Coreness Plots for Feb. 25th, 2020 Mobility Network]{#app:coreness}
 
@@ -296,32 +342,4 @@ We notice an important thing: these 3 models shows a sort of *performance decay*
 \end{center}
 \end{figure}
 
-\newpage
-
-## [D. Regions of middle Italy where the size of each vertex is proportional to betweenness]{#app:betweenness}
-
-\vspace{5mm}
-
-\begin{figure}
-\begin{center}
-\includegraphics{img/btw_regions.png}
-\caption{Finding the .rproj file for Chapter 3}
-\end{center}
-\end{figure}
-
-\newpage
-
-## [E. Network graphs where the size of each vertex is proportional to eigenvector centrality]{#app:eigenvector_centrality}
-
-\vspace{5mm}
-
-\begin{figure}
-\begin{center}
-\includegraphics{img/eig_vect_italy.png}
-\caption{Finding the .rproj file for Chapter 3}
-\end{center}
-\end{figure}
-
 \elandscape
-
-# References
