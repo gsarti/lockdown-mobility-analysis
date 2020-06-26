@@ -103,6 +103,30 @@ in the provice of northern and southern Italy, while in central Italy the situat
 
 For what it concerns about **assortativity by degree**, we calculate this measure for the graphs and, as reported in Table 1, we can see that in the mobility pre-lockdown we have a small positive value of $0.134$ that indicates the sligth tendency of nodes of similar degree to connect with each others. An interesting fact is that this measure increases through time, reaching a value of $0.326$. This could indicate that the movements have concentrated more between provinces of the same degree, reducing the movement from "small" to "large" ones.
 
+\begin{table}
+\begin{center}
+\begin{tabular}{l@{\qquad}ccc@{\qquad}ccc}
+\toprule
+& \multicolumn{1}{c}{\textbf{Pre-lock.}} & \multicolumn{1}{c}{\textbf{Mid-lock.}} & \multicolumn{1}{c}{\textbf{Post lock.}} \\
+\midrule
+ Density & 0.05004170 & 0.03986656 & 0.03619683 \\
+\midrule
+Assortativity by degree & 0.1343682  & 0.2511714  & 0.3258981 \\
+\midrule
+Transitivity Glo. & 0.3863636  & 0.4052718  & 0.4171598  \\
+\midrule
+Transitivity sub. upper & 0.1714286  & 0.2068966 & 0.2727273 \\
+\midrule
+Transitivity sub. lower & 0.3148734  & 0.3176471  & 0.3448702  \\
+\midrule
+Transitivity k-cores & 0.7959184   & 0.6127321   & 0.6113208 \\
+\bottomrule
+\end{tabular}
+\caption{Descrpitive analysis measures}
+\label{tab:descriptive_analysis}
+\end{center}
+\end{table}
+
 The **global clustering coefficient**, that refers to netowrk cohesion analysis, is calculated:
 
  - **Globally**
@@ -112,66 +136,9 @@ The **global clustering coefficient**, that refers to netowrk cohesion analysis,
 As reported in Table 1, the **transitivity** for the whole network tends to remain the same, except for a small increase that isn't significant. Thus, to inspect better this property, we calculate this measure on two subgraphs obtained placing a $threshold_w = 500$ on weights. The value that we choose is based on the distribution of weights in the network, noticing that most part of nodes  have weights that go from $0$ to $500$. As we can notice from the results presented in the table, for the subgraphs of nodes below the threshold, the transitivity, that is smaller with respect the global value, remains again pratically the same, instead for the other subgraph there is a significant increment of $0.10$. This could mean that big provinces tends to increase their connections through the three different phases of lockdown. We have also calculated this index on k-cores of the graph, selecting as k the minimum value between the three coreness value, resulting in $k = 8$ (notice that only the graph referred to the mobility pre-lockdown has a value of k bigger than the selected, with the coreness equal to $10$). The transitivity calculated on these maximal subgraphs has a significant decrease of $0.18$, as we expected, indicating that these subgraphs have a loss in terms of cohesion through the time.
 
 After this first descpritive analysis we can deduce that the decrease of movements caused by lock-down measures causes a loss of influence of the nodes in the whole network, with an increasing tendecy of similar degree nodes to connect with each others, indicating that movements from small provinces to large ones decrease, in favor of smaller and closer provinces, in terms of distance. The opposite happens for big provinces, movements from bigger to smaller reduce in favor of movements between big ones.
- 
-```{r echo = FALSE}
-assort_pre <- assortativity_degree(graph_pre,directed = TRUE)
-assort_mid <- assortativity_degree(graph_mid,directed = TRUE)
-assort_post <- assortativity_degree(graph_post,directed = TRUE)
 
-denisty_pre <- igraph::edge_density(graph_pre, loops = FALSE)
-density_mid <- igraph::edge_density(graph_mid, loops = FALSE)
-denisty_post <- igraph::edge_density(graph_post, loops = FALSE)
 
-gloabl_tran_pre <- transitivity(graph_pre,weights = E(graph_pre)$inverted_weight)
-gloabl_tran_mid <- transitivity(graph_mid, weights = E(graph_mid)$inverted_weight)
-gloabl_tran_post <- transitivity(graph_post, weights = E(graph_post)$inverted_weight)
 
-w_threshold <- 500
-sub_pre_weight_up<- subgraph.edges(graph_pre, E(graph_pre)[E(graph_pre)$weight>w_threshold],delete.vertices = TRUE )
-sub_mid_weight_up<- subgraph.edges(graph_mid, E(graph_mid)[E(graph_mid)$weight>w_threshold],delete.vertices = TRUE )
-sub_post_weight_up<- subgraph.edges(graph_post, E(graph_post)[E(graph_post)$weight>w_threshold],delete.vertices = TRUE )
-
-# Obtain transitivity for the subgraph of nodes which have larger weight than the threshold
-tran_sub_pre_weight_up <- transitivity(sub_pre_weight_up,weights = E(sub_pre_weight_up)$inverted_weight)
-tran_sub_mid_weight_up <- transitivity(sub_mid_weight_up, weights = E(sub_mid_weight_up)$inverted_weight)
-tran_sub_post_weight_up <- transitivity(sub_post_weight_up, weights = E(sub_post_weight_up)$inverted_weight)
-
-sub_pre_weight_lo<- subgraph.edges(graph_pre, E(graph_pre)[E(graph_pre)$weight<=w_threshold],delete.vertices = TRUE )
-sub_mid_weight_lo<- subgraph.edges(graph_mid, E(graph_mid)[E(graph_mid)$weight<=w_threshold],delete.vertices = TRUE )
-sub_post_weight_lo<- subgraph.edges(graph_post, E(graph_post)[E(graph_post)$weight<=w_threshold],delete.vertices = TRUE )
-
-tran_sub_pre_weight_lo <- transitivity(sub_pre_weight_lo,weights = E(sub_pre_weight_lo)$inverted_weigh)
-tran_sub_mid_weight_lo <- transitivity(sub_mid_weight_lo, weights = E(sub_mid_weight_lo)$inverted_weigh)
-tran_sub_post_weight_lo <- transitivity(sub_post_weight_lo, weights = E(sub_post_weight_lo)$inverted_weigh)
-
-coreness_pre <- graph.coreness(graph_pre) 
-coreness_mid <- graph.coreness(graph_mid)
-coreness_post <- graph.coreness(graph_post) 
-selected_coreness <- min(max(coreness_pre),max(coreness_mid), max(coreness_post))
-kcore_pre <- induced.subgraph(graph_pre,vids=which(coreness_pre == selected_coreness))
-kcore_mid <- induced.subgraph(graph_mid,vids=which(coreness_mid == selected_coreness))
-kcore_post <- induced.subgraph(graph_post,vids=which(coreness_post == selected_coreness))
-
-# Compute transitiity in the k cores subgraphs
-tran_sub_pre_kcore <- transitivity(kcore_pre,weights = NULL)
-tran_sub_mid_kcore <- transitivity(kcore_mid, weights = NULL)
-tran_sub_post_kcore <- transitivity(kcore_post, weights = NULL)
-
-m <- matrix(nrow = 6, ncol = 3)
-colnames(m) <- c("Pre-lock.", "Mid-lock.", "Post-lock.")
-rownames(m) <- c("Density", "Assortativity by degree ", "Transitivity Glo.","Transitivity sub. upper","Transitivity sub. lower", "Transitivity k-cores" )
-m[1,] <- as.array(c(denisty_pre,density_mid,denisty_post))
-m[2,] <- as.array(c(assort_pre,assort_mid,assort_post))
-m[3,] <- as.array(c(gloabl_tran_pre,gloabl_tran_mid,gloabl_tran_post))
-m[4,] <- as.array(c(tran_sub_pre_weight_up,tran_sub_mid_weight_up,tran_sub_post_weight_up))
-m[5,] <- as.array(c(tran_sub_pre_weight_lo,tran_sub_mid_weight_lo,tran_sub_post_weight_lo))
-m[6,] <- as.array(c(tran_sub_pre_kcore,tran_sub_mid_kcore,tran_sub_post_kcore))
-
-knitr::kable(
-  m, caption = 'Descrpitive analysis measures',format = "latex"
-)
-
-```
 ## [3. Analyzing Mobility Communities]{#comm-det}
 
 We limit ourselves to the analysis of `inbound_strength`, i.e. the sum of the weights of inbound edges to each node. Intuitively, it can be regarded as a proxy for the importance of the node inside the network. Figure [\textcolor{blue}{N}](#fig:histo_mobility) shows that movements across provinces follow a power law that is typical for those types of networks, with very few provinces accounting for most of the movements. We see from the histograms that the value of `inbound_strength` is much higher when accounting for intra-provincial movements. This is also evident in the visualizations of Appendix [\textcolor{blue}{X}](#app:eigenvector_centrality), where this value is used to  weight edge widths. While total movements don't seem to be affected, we can see a drop of roughly 30% in inter-provincial movements between February 25th and March 10th, with a further 13% decrease in mobility between March 10th and May 5th. These percentages match our intuition that inter-provincial mobility suffered the most from inter-regional lockdown measures.
