@@ -207,6 +207,39 @@ The label propagation algorithm appears to be more effective at modeling the com
 
 ## [4. Modeling Mobility Patterns]{#modeling}
 
+
+In order to implement ERGMs on our networks, we decide to insert some **auxiliary data** that could allow us a better model fitting. These data came from two different dataset:
+
+- NOME DATASET, that contains informations about **population**, **population density**, **surface** and **municipalities**, aggregated at province level.
+
+- COVID-19 italian dataset, that contains informations about the numer of **covid cases** at province level and number of **covid deaths** at regional level.
+
+
+These variables are chosen because they can be significant in our analysis, as they could influence the movements between the different regions and/or provinces.
+
+After adding these variables, we procede with the specification and the estimation of three different models, one for each graph. The general idea in order to specify the model is inspired by the stepAIC() function that performs backward model selection by starting a "maximal" model, which is then trimmed down: starting from the maximal model, we remove iteratively the less significant variable at each step, until we obtain a model in which all the variables are significant, then we select the one that has the lowest AIC value. 
+
+The three final models are:
+
+```{r,eval=FALSE, echo = TRUE}
+model_pre <- ergm(gc_pre ~ edges + mutual + nodematch('region', diff=F) + nodecov('ideg')
+                           nodecov('out_strength'))
+model_mid <- ergm(gc_mid ~ edges + mutual  + nodematch('region', diff=F) + nodecov('odeg'))
+model_post<-ergm(gc_post ~ edges + mutual+ nodecov('covid_deaths') + nodecov('ideg')
+                           nodematch('region', diff=F) +nodecov('eig_vect_centr'))
+```
+
+All the three models use informations about the number of edges, mutuality (number of pairs of actors $i$ and $j$ for which
+$(i \to j)$ and $(j \to i)$ both exist) and homofily, given by the match by region, of the networks.  They differ instead in the covariates they use: the first two models don't use statistics relative to COVID-19 and this make sense, because on those dates the data relating to the epidemic did not yet show its real extent on the territory (low values of covid cases and deaths). Instead, the third model uses the covid deaths, using also the eignevector centrality that reflects the node's centralization property. 
+
+We notice an important thing: these 3 models shows a sort of *performance decay*, in the sense that the first model, according to Goodness-of-fit diagnostics performs pretty well, while the second and third show worse and worse performances, even if for all the three models the MCMC diagnostics are good and they include all the relavant predictors. This could be a hint that three single ERGM models are not suitable for our purpose, thus considering a temporal network data analysis seems more appropriate for our problem, in which we have a graph that changes through three different moments of time.
+
+*CITARE PLOT GOF AND/OR MCMC FOR THE THREE BASIC MODELS*
+
+
+
+
+
 ## [5. Discussion and Conclusion]{#conclusion}
 
 \blandscape
