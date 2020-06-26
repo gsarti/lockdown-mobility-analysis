@@ -120,7 +120,63 @@ mcmc.diagnostics(gc_post_model)
 post_model_gof <- gof(gc_post_model)
 plot(post_model_gof)
 
+# Modelling on giant components in which edges weights are above a specific threshold
 
+plot_attr_hist(gc_pre, gc_mid, gc_post, attr = "inverted_weight", type = "edge", mfrow = c(1,3), xlab = "Edge weights")
+# Set a threshold of weights based on histograms
+w_threshold <- 50
+gc_pre_thresh<- subgraph.edges(gc_pre, E(gc_pre)[E(gc_pre)$inverted_weight>w_threshold],delete.vertices = TRUE )
+gc_mid_thresh<- subgraph.edges(gc_mid, E(gc_mid)[E(gc_mid)$inverted_weight>w_threshold],delete.vertices = TRUE )
+gc_post_thresh<- subgraph.edges(gc_post, E(gc_post)[E(gc_post)$inverted_weight>w_threshold],delete.vertices = TRUE )
+
+# Modelling
+gc_pre_net <- intergraph::asNetwork(gc_pre_thresh)
+gc_mid_net <- intergraph::asNetwork(gc_mid_thresh)
+gc_post_net <- intergraph::asNetwork(gc_post_thresh)
+
+
+# The obtained models are the reslults after many trials and errors. The general idea that have been
+# followed is: We start from a model with full covariates, removing at each try the less significant 
+# variable, selecting also the model according to the AIC criteria.
+
+# Model for the graph_pre. 
+gc_pre_model <- ergm(gc_pre_net ~ edges + mutual +  
+                       nodematch('region', diff=F) +
+                       nodecov('out_strength') +
+                       nodecov('ideg'),
+                     control = control.ergm(MCMC.interval=10000),
+                     verbose=T)
+summary(gc_pre_model)
+mcmc.diagnostics(gc_pre_model)
+pre_model_gof <- gof(gc_pre_model)
+par(mfrow=c(1,3))
+par(oma=c(0.5,2,1,0.5))
+plot(pre_model_gof)
+
+
+# Model for the graph_mid. 
+gc_mid_model <- ergm(gc_mid_net ~ edges + mutual  + 
+                       nodematch('region', diff=F) +
+                       nodecov('odeg'),
+                     control = control.ergm(MCMC.interval=10000),
+                     verbose=T)
+summary(gc_mid_model)
+mcmc.diagnostics(gc_mid_model)
+mid_model_gof <- gof(gc_mid_model)
+plot(mid_model_gof)
+
+
+# Model for the graph_post.  
+gc_post_model <- ergm(gc_post_net ~ edges + mutual+ nodecov('covid_deaths') + 
+                        nodematch('region', diff=F) +
+                        nodecov('eig_vect_centr') +
+                        nodecov('ideg'),
+                      control = control.ergm(MCMC.interval=10000),
+                      verbose=T)
+summary(gc_post_model)
+mcmc.diagnostics(gc_post_model)
+post_model_gof <- gof(gc_post_model)
+plot(post_model_gof)
 
 # degree
 # idegree
