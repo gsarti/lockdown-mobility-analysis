@@ -77,237 +77,38 @@ gc_mid_net <- intergraph::asNetwork(gc_mid)
 gc_post_net <- intergraph::asNetwork(gc_post)
 
 
-# Modelling the graph_pre with all vertex features and only edges, removing the less
-# significant feature each time from the model
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('in_strength') + nodecov('out_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_pre_model)
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('out_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_pre_model)
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('out_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_pre_model)
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('out_strength') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_pre_model)
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('out_strength') + nodecov('eig_vect_centr') +
-                       nodecov('ideg'))
-summary(gc_pre_model)
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('population') +
-                       nodecov('covid_deaths') + 
-                        nodecov('surface') + nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('out_strength') + nodecov('eig_vect_centr') +
-                       nodecov('ideg'))
-summary(gc_pre_model)
-par(mfrow=c(1,3))
-par(oma=c(0.5,2,1,0.5))
-pre_model_gof <- gof(gc_pre_model)
-plot(pre_model_gof)
-gc_pre_model <- ergm(gc_pre_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('surface') + nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('out_strength') + nodecov('eig_vect_centr') +
-                       nodecov('ideg'))
-summary(gc_pre_model)
-pre_model_gof <- gof(gc_pre_model)
-plot(pre_model_gof)
-gc_pre_model <- ergm(gc_pre_net ~ edges + 
-                       nodecov('surface') + nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('out_strength') + nodecov('eig_vect_centr') +
-                       nodecov('ideg'))
-summary(gc_pre_model)
-pre_model_gof <- gof(gc_pre_model)
-plot(pre_model_gof)
-gc_pre_model <- ergm(gc_pre_net ~ edges + 
-                       nodecov('surface') + nodecov('pop_density') + 
+# The obtained models are the reslults after many trials and errors. The general idea that have been
+# followed is: We start from a model with full covariates, removing at each try the less significant 
+# variable, selecting also the model according to the AIC criteria.
+
+# Model for the graph_pre. 
+gc_pre_model <- ergm(gc_pre_net ~ edges + asymmetric +  
                        nodematch('region', diff=F) +
                        nodecov('out_strength') +
                        nodecov('ideg'))
 summary(gc_pre_model)
 pre_model_gof <- gof(gc_pre_model)
 plot(pre_model_gof)
-gc_pre_model <- ergm(gc_pre_net ~ edges + 
-                       nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('out_strength') +
-                       nodecov('ideg'))
-summary(gc_pre_model)
-pre_model_gof <- gof(gc_pre_model)
-plot(pre_model_gof)
-gc_pre_model <- ergm(gc_pre_net ~ edges + 
-                       nodematch('region', diff=F) +
-                       nodecov('out_strength') +
-                       nodecov('ideg'))
-summary(gc_pre_model)
-pre_model_gof <- gof(gc_pre_model)
-plot(pre_model_gof)
-gc_pre_model <- ergm(gc_pre_net ~ edges + 
-                       nodematch('region', diff=F) +
-                       nodecov('ideg'))
-summary(gc_pre_model)
-pre_model_gof <- gof(gc_pre_model)
-plot(pre_model_gof)
 
 
-
-
-# Modelling the graph_mid with all vertex features and only edges, removing the less
-# significant feature each time from the model
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('in_strength') + nodecov('out_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('in_strength') + nodecov('out_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
+# Model for the graph_mid. 
+gc_mid_model <- ergm(gc_mid_net ~ edges + mutual  + 
                        nodematch('region', diff=F) +
-                       nodecov('in_strength') + nodecov('out_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('in_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('in_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodematch('region', diff=F) +
-                       nodecov('eig_vect_centr') +
-                       nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') +  
-                       nodematch('region', diff=F) +
-                       nodecov('eig_vect_centr') +
-                       nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodecov('surface') +  
-                       nodematch('region', diff=F) +
-                       nodecov('eig_vect_centr') +
-                       nodecov('odeg'))
-summary(gc_mid_model)
-gc_mid_model <- ergm(gc_mid_net ~ edges + nodecov('covid_deaths') + 
-                       nodematch('region', diff=F) +
-                       nodecov('eig_vect_centr') +
                        nodecov('odeg'))
 summary(gc_mid_model)
 mid_model_gof <- gof(gc_mid_model)
 plot(mid_model_gof)
 
-# Modelling the graph_post with all vertex features and only edges, removing the less
-# significant feature each time from the model
-gc_post_model <- ergm(gc_post_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
-                       nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                       nodecov('municipalities') + nodematch('region', diff=F) +
-                       nodecov('in_strength') + nodecov('out_strength') + 
-                       nodecov('betweenness') + nodecov('eig_vect_centr') +
-                       nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges + nodecov('covid_cases') + nodecov('covid_deaths') + 
-                        nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                        nodecov('municipalities') + nodematch('region', diff=F) +
-                        nodecov('in_strength') + 
-                        nodecov('betweenness') + nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
-                        nodecov('population') + nodecov('surface') + nodecov('pop_density') + 
-                        nodecov('municipalities') + nodematch('region', diff=F) +
-                        nodecov('in_strength') + 
-                        nodecov('betweenness') + nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
-                        nodecov('population') + nodecov('pop_density') + 
-                        nodecov('municipalities') + nodematch('region', diff=F) +
-                        nodecov('in_strength') + 
-                        nodecov('betweenness') + nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
-                        nodecov('pop_density') + 
-                        nodecov('municipalities') + nodematch('region', diff=F) +
-                        nodecov('in_strength') + 
-                        nodecov('betweenness') + nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
-                        nodecov('pop_density') + 
-                        nodematch('region', diff=F) +
-                        nodecov('in_strength') + 
-                        nodecov('betweenness') + nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
-                        nodematch('region', diff=F) +
-                        nodecov('in_strength') + 
-                        nodecov('betweenness') + nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
-                        nodematch('region', diff=F) +
-                        nodecov('betweenness') + nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
-                        nodematch('region', diff=F) +
-                        nodecov('eig_vect_centr') +
-                        nodecov('ideg') + nodecov('odeg'))
-summary(gc_post_model)
-gc_post_model <- ergm(gc_post_net ~ edges  + nodecov('covid_deaths') + 
+
+# Model for the graph_post.  
+gc_post_model <- ergm(gc_post_net ~ edges + mutual+ nodecov('covid_deaths') + 
                         nodematch('region', diff=F) +
                         nodecov('eig_vect_centr') +
                         nodecov('ideg'))
 summary(gc_post_model)
 post_model_gof <- gof(gc_post_model)
 plot(post_model_gof)
+
 
 
 # degree
