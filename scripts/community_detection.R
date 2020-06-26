@@ -48,7 +48,6 @@ sub_group_pre <- subgraph(graph_pre,group_pre)
 sub_group_mid <- subgraph(graph_mid,group_mid)
 sub_group_post <- subgraph(graph_post,group_post)
 
-
 # # The pre-lockdown and the post-lockdown giant components are connected so we can calculate the closeness
 # igraph::is.connected(sub_group_pre,mode = "strong")
 # igraph::is.connected(sub_group_mid,mode = "strong")
@@ -66,8 +65,6 @@ sub_group_post <- subgraph(graph_post,group_post)
 # par(mfrow=c(1,2))
 # plot_single_weighted_graph(sub_group_pre, v_attr = clos_sub_pre* 10000)
 # plot_single_weighted_graph(sub_group_post, v_attr = clos_sub_post* 10000 )
-
-
 
 # Checking the "smallworld" property on giant components
 # A network can be said "smallworld" if its smallworldness is higher 

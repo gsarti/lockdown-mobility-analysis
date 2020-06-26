@@ -43,33 +43,37 @@ Taken from Moodle:
 - [x] Select a metric to weight edges among those available
 - [x] Perform descriptive analysis of the 3 networks in an R script
 - [x] Write report section comparing similarities and differences in the analysis
-- [ ] Add comments to the script
+- [x] Add comments to the script
 
 ### 2
 
 - [x] Review techniques of exploratory analysis for community detection
 - [x] Perform community detection for the 3 networks in an R script
-- [ ] Write report section highlighting relevant communities and techniques used
-- [ ] Add comments to the script
+- [x] Write report section highlighting relevant communities and techniques used
+- [x] Add comments to the script
 
 ### 3
 
-- [ ] Review exponential random graphs presented during the course
+- [x] Review exponential random graphs presented during the course
 - [x] Select subnetworks for all three dataset to fit ERGs (Giant component, non-looping edges)
 - [x] Select additional features to improve the quality of fit (Mortality, Tot. population and Tot. positive per province)
-- [ ] Perform the modeling R script
+- [x] Perform the modeling R script
 - [ ] Write report section showing the structure and performances of various models
-- [ ] Add comments to the script
+- [x] Add comments to the script
 
 **Useful sources:**
 
-- [Italian Public Datasets](https://github.com/italia/awesome-italian-public-datasets) (especially Automobile Club Italia about available number of vehicles)
+- [Italian Public Datasets](https://github.com/italia/awesome-italian-public-datasets) (especially Automobile Club Italia about available number of vehicles).
 
-- [OECD Stats](https://stats.oecd.org/) (see Regions and Cities > Regional Statistics, ITA provices are "Small regions" TL3)
+- [OECD Stats](https://stats.oecd.org/) (see Regions and Cities > Regional Statistics, ITA provices are "Small regions" TL3).
+
+- [Provincie d'Italia](https://it.wikipedia.org/wiki/Province_d%27Italia) for data about population, surface, density and municipalities.
+
+- [DPC Open COVID-19 Data for Italy](https://github.com/pcm-dpc/COVID-19) for death and ill counts at provincial level.
 
 ### 4
 
-- [ ] Perform additional analysis to gain more insights about the mobility changes *(find something related to the analysis a geographical networks?)*
+- [x] Perform additional analysis to gain more insights about the mobility changes (Temporal modeling with `tergm`, compare with Google mobility reports)
 - [ ] Write final report section
 
 **Useful sources:**

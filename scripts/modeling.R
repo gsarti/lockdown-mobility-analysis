@@ -85,7 +85,9 @@ gc_post_net <- intergraph::asNetwork(gc_post)
 gc_pre_model <- ergm(gc_pre_net ~ edges + mutual +  
                        nodematch('region', diff=F) +
                        nodecov('out_strength') +
-                       nodecov('ideg'))
+                       nodecov('ideg'),
+                     control = control.ergm(MCMC.interval=10000),
+                     verbose=T)
 summary(gc_pre_model)
 mcmc.diagnostics(gc_pre_model)
 pre_model_gof <- gof(gc_pre_model)
@@ -97,7 +99,9 @@ plot(pre_model_gof)
 # Model for the graph_mid. 
 gc_mid_model <- ergm(gc_mid_net ~ edges + mutual  + 
                        nodematch('region', diff=F) +
-                       nodecov('odeg'))
+                       nodecov('odeg'),
+                     control = control.ergm(MCMC.interval=10000),
+                     verbose=T)
 summary(gc_mid_model)
 mcmc.diagnostics(gc_mid_model)
 mid_model_gof <- gof(gc_mid_model)
@@ -108,7 +112,9 @@ plot(mid_model_gof)
 gc_post_model <- ergm(gc_post_net ~ edges + mutual+ nodecov('covid_deaths') + 
                         nodematch('region', diff=F) +
                         nodecov('eig_vect_centr') +
-                        nodecov('ideg'))
+                        nodecov('ideg'),
+                      control = control.ergm(MCMC.interval=10000),
+                      verbose=T)
 summary(gc_post_model)
 mcmc.diagnostics(gc_post_model)
 post_model_gof <- gof(gc_post_model)
