@@ -27,7 +27,7 @@ plot_graph_on_map <- function(g, map) {
                       plot_vector[edgelist[,2],], E(g)$color)
   colnames(edges) <- c("X1", "Y1", "X2", "Y2", "Color")
   plot_vector$region <- as.factor(V(g)$region)
-  plot_vector$size <- unlist(lapply(V(g)$in_strength, function(x){normalize_counts(x,2,3)}), use.names=FALSE)
+  plot_vector$size <- unlist(lapply(V(g)$in_strength, function(x){max(log(x),3)}), use.names=FALSE)
   p + geom_segment(aes(x=X1, y=Y1, xend = X2, yend = Y2), 
                    data=edges, size = 0.7, colour=edges$Color) + 
     geom_point(aes(V1, V2, colour=factor(region), size=size), data=plot_vector) + 
