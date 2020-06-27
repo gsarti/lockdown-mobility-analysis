@@ -5,7 +5,7 @@ abstract: "The aim of this project is to analyze shifts in mobility patterns dur
 author: 
 - Gabriele Sarti
 - Enrico Fallacara
-date: "University of Trieste, A.A. 2019/2020"
+date: "University of Trieste, Academic Year 2019/2020"
 urlcolor: blue
 output: 
   pdf_document:
@@ -122,7 +122,7 @@ Table [\textcolor{blue}{1}](#tab:descriptive_analysis) shows how **transitivity*
 \begin{center}
 \begin{tabular}{l@{\qquad}ccc@{\qquad}ccc}
 \toprule
-& \multicolumn{1}{c}{\textbf{Feb. 25th}} & \multicolumn{1}{c}{\textbf{March 10th}} & \multicolumn{1}{c}{\textbf{May 5th}} \\
+& \multicolumn{1}{c}{\textbf{Feb. 25th}} & \multicolumn{1}{c}{\textbf{Mar. 10th}} & \multicolumn{1}{c}{\textbf{May 5th}} \\
 \midrule
 \# of provinces & 110 & 110 & 110 \\
 \# of edges & 600 & 478 & 434 \\
@@ -224,7 +224,7 @@ The **label propagation algorithm**, instead, iteratively sets node community me
  & \multicolumn{3}{c}{\textbf{Girvan-Newman}} & \multicolumn{3}{c}{\textbf{Label Propagation}} \\
  \cmidrule(lr){2-4}
  \cmidrule(lr){5-7}
-& \multicolumn{1}{c}{\textbf{25/02}} & \multicolumn{1}{c}{\textbf{10/03}} & \multicolumn{1}{c}{\textbf{05/05}} & \multicolumn{1}{c}{\textbf{25/02}} & \multicolumn{1}{c}{\textbf{10/03}} & \multicolumn{1}{c}{\textbf{05/05}} \\
+& \multicolumn{1}{c}{\textbf{Feb. 25th}} & \multicolumn{1}{c}{\textbf{Mar. 10th}} & \multicolumn{1}{c}{\textbf{May 5th}} & \multicolumn{1}{c}{\textbf{Feb. 25th}} & \multicolumn{1}{c}{\textbf{Mar. 10th}} & \multicolumn{1}{c}{\textbf{May 5th}} \\
 \midrule
 \# communities & 36 & 60 & 7 & 22 & 22 & 24\\
 modularity $Q$ & .39 & .25 & .39 & .51 & .57 & .59 \\
@@ -272,9 +272,67 @@ mod.may <- ergm(may.net ~ edges + mutual + nodematch('region', diff=F) + nodecov
 All the three models use informations about the number of edges, mutuality (number of pairs of actors $i$ and $j$ for which
 $(i \to j)$ and $(j \to i)$ both exist) and homophilic relations given by the regional match in model factors. The first two models don't leverage COVID-19 statistics; we argue that is is reasonable since for early dates we could not foresee the real epidemic extent on the Italian territory except for some specific regions (e.g. Lombardy and Veneto). Instead, the third model shows the relevance of the covid deaths factor, using also eignevector centrality as a proxy for node importance. We argue that those two factors are important when taken together since central provinces with high mortality rates were nonetheless able to keep strong connections with their neighbours, while more secluded ones couldn't (e.g. Milan vs. Trento) 
 
-It is relevant to note that the 3 models shows some sort of *performance decay* where the goodness goodness-of-fit diagnostics for the MCMC procedure worsen over time for different configurations, despite remaining quite acceptable for our purposes. We interpret this as an hint to the inadequacy of individual ERGMs for modeling the evolution of a network through time, and proceed to use **temporal ERGMs** to look for better solutions.
+It is relevant to note that models show some sort of *performance decay*, where the goodness goodness-of-fit diagnostics for the MCMC procedure worsen over time for different configurations, despite remaining quite acceptable for our purposes. We interpret this as an hint to the inadequacy of individual ERGMs for modeling the evolution of a network through time, and proceed to use **temporal ERGMs** to look for better solutions.
 
 ### [4.1 Mobility Patterns Through Time]{#tergms}
+
+Moving from static snapshots of mobility in Italy to a dynamic mobility network is highly desirable, since it allows us to focus our analysis on **tie dynamics** (both formation and dissolution of edges) and **attribute dynamics** (e.g. change in nodes inbound and outbound strengths). For this purpose we use the `networkDynamic` package in R to convert our three static mobility networks into a single dynamic network with three discrete timesteps, we model the temporal network using the `tergm` package[^4] and we visualize our results with `ndtv`[^5]. Since our analysis is restricted only to the three selected dates, this aims to be a superficial proof-of-concept more than a full-fledged analysis.
+
+[^4]:http://statnet.org/Workshops/tergm_tutorial.html
+[^5]:http://statnet.org/Workshops/ndtv_workshop.html
+
+The `stergm` function we use for temporal network modeling allows us to find **separable temporal ERGMs (STERGMs)** that closely describe the temporal dynamics of our network. STERGM comprise two models: one for **tie formation**, and one for **tie dissolution**. Models are separable in the sense that factors influencing tie formation can be different from those influencing dissolution in the network, and closely match the normal ERGMs with the exception of added time indices, conditionals on previous existance of ties and individual $\theta$ and $g$ parameters for each model. The `tergm` tutorial in the footnotes provides a more formal and comprehensive presentation of this approach.
+
+We use the **conditional maximum likelihood estimation (CMLE)** fitting approach since we are interested in modeling the transition between networks that represent discrete time points. Our best selected model, obtained with the same approach as the ERGM ones in the previous sections, has the following form:
+
+```{r,eval=FALSE, echo = TRUE}
+mob.nets <- list(feb.net, mar.net, may.net)
+stergm.fit <- stergm(mob.nets, 
+                     formation= ~ edges + gwesp(0.25, fixed=T) + mutual +
+                        nodecov('eig_vect_centr') + nodematch('region', diff=F),
+                     dissolution = ~ edges + mutual + nodecov('covid_deaths') +  
+                         nodecov('pop_density') + edgecov('length_km') +
+                         edgecov('weight'),
+                     targets="formation", estimate = "CMLE")
+```
+
+Table [\textcolor{blue}{3}](#tab:ergm_fit) shows the coefficient values and the goodness-of-fit metrics for the three ERGM models and the TERGM subcomponents. We observe here how covariates in models closely fit our intuition about mobility dynamics: nodes with same regional membership, which are already connected by their neighbors (mutuality, `gwesp` as a more robust version of `triangles`) and are more central (eigen. centrality) and strongly connected (edge weight, in-degree, out-degree) are much more likely to be connected by an edge in the future. On the other hand, covid deaths, population density and distance have all a negative impact on the likelihood of edge formation (i.e. positively affect edge dissolution), as can be seen from May 5th and TERGM Dissolution models.
+
+We validate our procedure using MCMC diagnostic plots and visualizing goodness of fit with respect to our covariates. We don't report diagnostic plots for brevity, but all show a reasonable sampling behavior. Appendix [\textcolor{blue}{G}](#app:gof_tergm) reports goodness-of-fit plots obtained from our TERGM formation model, closely matching the empirical distribution of covariates in our network. By performing a dynamic simulation of the network for $n=10$ time steps we observe how the behavior of the simulated mobility network closely matches real-world behavior, with a disconnection of insular and southern provinces and an overall increase in the diameter of the network.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l@{\qquad}ccc@{\qquad}cc}
+\toprule
+ & \multicolumn{3}{c}{\textbf{ERGMs}} & \multicolumn{2}{c}{\textbf{TERGM}} \\
+ \cmidrule(lr){2-4}
+ \cmidrule(lr){5-6}
+& \multicolumn{1}{c}{\textbf{Feb. 25th}} & \multicolumn{1}{c}{\textbf{Mar. 10th}} & \multicolumn{1}{c}{\textbf{May 5th}} & \multicolumn{1}{c}{\textbf{Generation}} & \multicolumn{1}{c}{\textbf{Dissolution}} \\
+edges & $-6.92^{***}$ & $-7.50^{***}$ & $-7.64^{***}$ & $-9.62^{***}$ & $-2.36^{***}$ \\
+mutual & $7.21^{***}$ & $8.69^{***}$ & $8.15^{***}$ & $4.17^{***}$ & $3.31^{***}$ \\
+gwesp fix 0.25 & - & - & - & $0.92^{**}$ & - \\
+\midrule
+in-degree & $0.11^{***}$ & - & $1.76^{***}$ &- & -  \\
+out-degree & - & $0.10^{***}$ & - & - & - \\
+eigen. centrality & - & - & $-0.43^{***}$ & $1.40^{*}$ & - \\
+\midrule
+region & $2.31^{***}$ & $2.18^{***}$ & $2.36^{***}$ & $2.89^{***}$ & - \\
+pop. density & - & - & - & - & $-3_{e-4}^{*}$ \\
+covid deaths & - & - & $-3.95_{e-5}^{***}$ & - & $-1_{e-3}^{.}$\\
+\midrule
+edge weight & - & - & - & - & $.08^{***}$ \\
+edge length (km) & - & - & - & - & $4_{e-3}^{***}$ \\
+\midrule
+AIC & 1795 & 1360 & 1293 & 174.1 & 416.8 \\
+BIC & 1831 & 1390 & 1338 & 214.3 & 446.7 \\
+\bottomrule
+\end{tabular}
+\caption{Quality estimators (AIC \& BIC) and covariate coefficients (rest) for the three ERGM models fit on individual time slices and TERGM generation and dissolution models fit on the dynamic mobility network. Signif. codes:  *** 0.001 ** 0.01 * 0.05 . 0.1. We use subscript notation for negative exponents.}
+\label{tab:ergm_fit}
+\end{center}
+\end{table}
+
+
 
 
 
@@ -362,6 +420,19 @@ It is relevant to note that the 3 models shows some sort of *performance decay* 
 \begin{center}
 \includegraphics{img/clustering.png}
 \caption{Left to right: Communities highlighted by the Girvan-Newman (top) and the Label Propagation (bottom) clustering algorithms for February 25th, March 10th, May 5th mobility networks. Node and regions' colors reflect community membership, red edges show inter-community mobility.}
+\end{center}
+\end{figure}
+
+\newpage
+
+## [G. Goodness of Fit for Mobility Network's TERGM]{#app:gof_tergm}
+
+\vspace{5mm}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=640px, height=500px]{img/gof_tergm.png}
+\caption{Goodness of fit visualization for the formation (top) and the dissolution (bottom) components of TERGM model on Italy mobility network.}
 \end{center}
 \end{figure}
 

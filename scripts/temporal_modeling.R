@@ -142,5 +142,5 @@ saveGIF(render.animation(stergm.sim.1, plot.par=list(
 # Check goodness of fit
 stergm.fit.gof <- gof(stergm.fit)
 stergm.fit.gof
-par(mfrow=c(2,2))
-plot(stergm.fit.gof)
+par(mfrow=c(2,5))
+plot(stergm.fit.gof, main="")
