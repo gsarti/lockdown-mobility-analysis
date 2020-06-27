@@ -338,6 +338,19 @@ BIC & 1831 & 1390 & 1338 & 214.3 & 446.7 \\
 
 ## [5. Discussion and Conclusion]{#conclusion}
 
+This analysis highlights that the decrease of movements caused by lock-down measures cause not only a reduction in absolute terms of movements, but also in the "type" of the shifts between different provinces, pointing out an increasing propensity to move between provinces of similar size. 
+
+The tight-knit, well-connected communities founded in the analysis put in evidence these aspect very well, showing how inter-provincial and inter-regional movements were the most affected by the lockdown procedure.
+
+The covariates in our fitted models, especially in the case of STERGM, reflect that nodes with same regional membership are much more likely to be connected by an edge in the future, while distance, covid deaths and population density are all factors that have a negative impact on edge connectivity.
+
+
+In the end, by comparing our results with **Google Global Mobility Report**[^4], which measures visitor numbers to specific categories of location (e.g. train stations; workplaces; residential areas,...) every day and compares this change relative to baseline day before the pandemic outbreak, we can see that the results, on May 5, in terms of reduction of movements are very similar, since displacements to workplaces  have a decrease of 46%, which is in line with our 43% reduction , giving a further final confirmation about analysis' results.
+
+
+[^4]: https://www.google.com/covid19/mobility/
+
+\newpage
 
 # References
 
