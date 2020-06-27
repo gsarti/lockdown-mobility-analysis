@@ -127,7 +127,7 @@ Table [\textcolor{blue}{1}](#tab:descriptive_analysis) shows how **transitivity*
 \# of provinces & 110 & 110 & 110 \\
 \# of edges & 600 & 478 & 434 \\
 \# of movements & 119065 & 85258 & 68515 \\
-% mobility decrease & - & 30% & 43 % \\
+\% mobility decrease & - & 30\% & 43\% \\
 \midrule
 Density & .050 & .040 & .036 \\
 Diameter & .306 & .506 & .843 \\
@@ -160,9 +160,9 @@ We finally compute the **global clustering coefficient** to quantify network coh
 
 To summarize, the decrease of movements caused by lock-down measures causes a loss of influence of the nodes in the whole network, with an increasing tendecy of similar degree nodes to connect with each others, indicating that movements from small provinces to large ones decreases in favor of smaller and geographically-closer provinces. The opposite happens for large provinces, with an increase in assortativity reflecting a decrease in mobility from large to small provinces reduce in favor of movements among large ones.
 
-```{r echo = FALSE, fig.height=3.5, fig.cap="\\label{fig:histo_mobility} Distribution of total inbound movements across provinces at various stages of the Italian lockdown, considering inter-provincial movements only (top) and all movements (bottom). Left to right: February 25th, March 10th, May 5th mobility."}
+```{r echo = FALSE, fig.height=3.5, fig.cap="\\label{fig:histo_mobility} Distribution of inbound strength $s$ across provinces at various stages of the Italian lockdown, considering inter-provincial movements only (top) and all movements (bottom). Left to right: February 25th, March 10th, May 5th mobility."}
 par(mfrow=c(2,3), mai=c(0.5,0.3,0.3,0.3))
-xlab <- '# of Movements'
+xlab <- 'Inbound strength'
 attr <- 'in_strength'
 type <- 'vertex'
 breaks <- 15
@@ -182,11 +182,11 @@ hist(post_attr, xlab = xlab, ylab="# of Provinces", main="",breaks=breaks, ylim=
 
 ## [3. Analyzing Mobility Communities]{#comm-det}
 
-We limit ourselves to the analysis of `inbound_strength`, i.e. the sum of the weights of inbound edges to each node. Intuitively, it can be regarded as a proxy for the importance of the node inside the network. Figure [\textcolor{blue}{3}](#fig:histo_mobility) shows that movements across provinces follow a power law that is typical for those types of networks, with very few provinces accounting for most of the movements. We see from the histograms that the value of `inbound_strength` is much higher when accounting for intra-provincial movements. This is also evident in the visualizations of Appendix [\textcolor{blue}{B}](#app:eigenvector_centrality), where this value is used to  weight edge widths. While total movements don't seem to be affected, we can see a drop of roughly 30% in inter-provincial movements between February 25th and March 10th, with a further 13% decrease in mobility between March 10th and May 5th. These percentages match our intuition that inter-provincial mobility suffered the most from lockdown measures.
+We define **inbound strength** $s$ as the sum of the weights of inbound directed edges (movements) to each node (province). Intuitively, it can be regarded as a proxy for the importance of the node inside the network. Figure [\textcolor{blue}{3}](#fig:histo_mobility) shows that movements across provinces follow a power law that is typical for large networks, with very few provinces accounting for most of the movements. We see from the histograms that the value of $s$ is much higher when accounting for intra-provincial movements. This is also evident in the visualizations of Appendix [\textcolor{blue}{B}](#app:eigenvector_centrality), where this value is used to weight edge widths. While total movements don't seem to be affected, Table [\textcolor{blue}{1}](#tab:descriptive_analysis) shows the large drop of 30% in inter-provincial movements between February 25th and March 10th, with a further 13% decrease in mobility between March 10th and May 5th. These percentages match our intuition that inter-provincial mobility suffered the most from lockdown measures.
 
 We proceeded to compute and visualize the coreness of the network, as shown in Appendix [\textcolor{blue}{C}](#app:coreness). As expected, removing intra-provincial movements (looping edges) doesn't affect at all the coreness structure. From the coreness plots structure it is evident how north-eastern, southern and insular provinces have a much lower number of connections with respect to central (e.g. Tuscany) and north-western (e.g. Lombardy, Piedmont) ones. Calabrian and Sardinian provinces have the lowest number of connections.
 
-In order to account for the intrinsically weighted structure of our networks, we developed a **weighted version of the coreness algorithm** that groups vertices in bins of fixed length based on their weights and uses bin membership as a proxy for weighted coreness. In our specific case, we used a bin size of 500 raw movements for the network without intra-provincial movements, and 10'000 for the network containing all movements. The details of our implementation are presented in Algorithm [\textcolor{blue}{1}](#alg:weighted-coreness). We see from the results shown in Appendix [\textcolor{blue}{D}](#app:wcoreness) that our approach effectively highlights the centrality of northwestern provinces when we account only for inter-provincial movements, while it shows a strong correlation with population counts when accounting for all external and internal movements in the province.
+In order to account for the intrinsically weighted structure of our networks, we developed a **weighted version of the coreness algorithm** that groups vertices in bins of fixed length based on their weights and uses bin membership as a proxy for weighted coreness. In our specific case, we used a bin size $b$ of 500 raw movements for the network without intra-provincial movements, and 10'000 for the network containing all movements. The details of our implementation are presented in Algorithm [\textcolor{blue}{1}](#alg:weighted-coreness). We see from the results shown in Appendix [\textcolor{blue}{D}](#app:wcoreness) that our approach effectively highlights the centrality of northwestern provinces when we account only for inter-provincial movements, while it shows a strong correlation with population counts when accounting for all external and internal movements in the province.
 
 \begin{algorithm}
 \SetAlgoLined
@@ -210,13 +210,12 @@ In order to account for the intrinsically weighted structure of our networks, we
  \label{alg:weighted-coreness}
 \end{algorithm}
 
-For the second part of the community analysis, we proceeded only with the network of inter-provincial movements since the presence of looping edges wasn't relevant for detecting communities inside the network. We inspected the component structure of the network in the three analyzed dates, finding that a single giant component comprising almost all the provinces, with few isolated nodes left aside in Southern Italy, was present at all times. This isn't surprising, as we expected some level of communication at a national level at all times for business and family-related reasons despite the lockdown.
+For the second part of the community analysis, we proceeded only with the network of inter-provincial movements since the presence of looping edges wasn't relevant for detecting communities inside the network. We further inspected the component structure of the network in the three analyzed dates, finding that a single giant component comprising almost all the provinces, with few isolated nodes left aside in Southern Italy, was present at all times. This isn't surprising, as we expect some level of communication at a national level at all times for business and family-related reasons despite the lockdown.
 
-In Appendix [\textcolor{blue}{E}](#app:components) we show the similarity between the structure of cliques through time and the components found by considering network actors with weighted coreness rank > 2, i.e. with at least 1000 inter-provincial outbound movements at all times. This highlights the fact that most tight-knit communities are also the ones having the higher number of connections in general, reflecting the principle of preferential attachment which is commonly verified in many real-world social networks. This fact is also verified by the presence of a **small-worldness index** above 3 at all times, and a global transitivity that is significantly above chance. Both cliques and weighted coreness components highlight the centrality of Milan and its neighbouring provinces, Tuscany provinces and the Rome-Naples macro-region. Weighted coreness components further provide additional information by highlighting the high connectivity of Veneto and representing well the drop in connectivity during the lockdown.
+In Appendix [\textcolor{blue}{E}](#app:components) we show the similarity between the structure of cliques through time and the components found by considering network actors with weighted coreness rank $> 2$, i.e. with at least $1000$ inter-provincial outbound movements at all times. This highlights the fact that most tight-knit communities are also the ones having the higher number of connections in general, reflecting the principle of preferential attachment which is commonly verified in many real-world complex networks. This fact is also verified by the presence of a **small-worldness index** above $3$ at all times, and a global transitivity that is significantly above chance. Both cliques and weighted coreness components highlight the **centrality of Milan** and its neighbous, Tuscany provinces and the Rome-Naples macro-region. Weighted coreness components further provide additional information by highlighting the high connectivity of Veneto and representing well the drop in connectivity during the lockdown.
 
-To conclude the section, we performed some community detection experiments leveraging two well-established algorithms. The **Girvan-Newman algorithm** finds communities by progressively removing edges based on their betweenness.
-
-The **Label propagation algorithm**, instead, iteratively sets node community memberships based on the weighted most common membership across neighbouring nodes until convergence. This approach doesn't require inverting raw movements weights $w$ since larger edge weights correspond to stronger connections. Results produced by the two methods are presented descriptively in Table [\textcolor{blue}{2}](#tab:clustering) and visually in Appendix [\textcolor{blue}{F}](#app:clustering). We could not apply standard multi-level modularity optimization methods given the directed nature of our network.
+As the last step of our community analysis, we performed some community detection experiments leveraging two well-established algorithms. The **Girvan-Newman algorithm** finds communities by progressively removing edges based on their betweenness.
+The **label propagation algorithm**, instead, iteratively sets node community memberships based on the weighted most common membership across neighbouring nodes until convergence. While Girvan-Newman method considers distances as costs, thus forcing us to leverage *inverted movement weights* $w'$ presented in Section [\textcolor{blue}{2}](#desc-anal), the label propagation approach doesn't require inverting raw movements weights $w$ since larger edge weights correspond to stronger connections. Results produced by the two methods are presented descriptively in Table [\textcolor{blue}{2}](#tab:clustering) and visually in Appendix [\textcolor{blue}{F}](#app:clustering). We could not apply standard multi-level modularity optimization methods given the directed nature of our network, but we note that label propagation achieves significantly higher modularity scores.
 
 \begin{table}
 \begin{center}
@@ -240,36 +239,42 @@ Gini index & .96 (.18) & .97 (.14) & .66 (.37) & .78 (.22) & .76 (.22) & .80 (.2
 \end{center}
 \end{table}
 
-The label propagation algorithm appears to be more effective at modeling the community structure of the networks at various times. Communities found with label propagation closely approximate regional membership at all times, a fact that matches the empirical presence of regional hubs of communication across the Italian territory. It is interesting to note that both algorithms correctly highlight a decrease in inter-community edges over time, which is also made evident by the drastic reduction in red inter-cluster edges in the plots of Appendix [\textcolor{blue}{F}](#app:clustering).
+Indeed, the label propagation algorithm appears to be more effective at modeling the community structure of the networks at various times. Communities found with label propagation closely approximate regional membership at all times, a fact that matches the empirical presence of regional hubs of communication across the Italian territory. It is interesting to note that both algorithms correctly highlight a decrease in inter-community edges over time, which is also made evident by the drastic reduction in red inter-cluster edges in the plots of Appendix [\textcolor{blue}{F}](#app:clustering).
+
+To summarize, in this section we further highlighted the presence of tight-knit, well-connected communities in northern and central regions of Italy, showing how inter-provincial movements and especially inter-regional movements were the most affected by the lockdown procedure.
 
 ## [4. Modeling Mobility Patterns]{#modeling}
 
-In order to implement ERGMs on our networks, we decide to insert some **auxiliary data** that could allow us a better model fitting. These data came from two different dataset:
+The final section of our report concerns our ability to model the mobility network structure using **exponential random graphs (ERGMs)** and their **temporal variant (TERGMs)**. In order to achieve a better quality of fit on our networks, we decided to complement our mobility patterns with some **auxiliary data** that can provide additional useful information to the model. More specifically, we leverage the two following data sources:
 
-- NOME DATASET, that contains informations about **population**, **population density**, **surface** and **municipalities**, aggregated at province level.
+- **Province d'Italia** data taken from Wikipedia[^2], that contains informations about **population**, **population density**, **surface** and **municipalities** at provincial level.
 
-- COVID-19 italian dataset, that contains informations about the numer of **covid cases** at province level and number of **covid deaths** at regional level.
+[^2]: https://it.wikipedia.org/wiki/Province_d%27Italia
 
-These variables are chosen because they can be significant in our analysis, as they could influence the movements between the different regions and/or provinces.
+- **COVID-19 Italy** data taken from the Protezione Civile official Github repository[^3], that contains informations about the numer of **covid cases** at province level and number of **covid fatalities** at regional level. We associate regional mortality to each province following the intuition that the perception of danger for individuals of each province can be estimated by looking at regional data.
 
-After adding these variables, we procede with the specification and the estimation of three different models, one for each graph. The general idea in order to specify the model is inspired by the stepAIC() function that performs backward model selection by starting a "maximal" model, which is then trimmed down: starting from the maximal model, we remove iteratively the less significant variable at each step, until we obtain a model in which all the variables are significant, then we select the one that has the lowest AIC value. 
+[^3]: https://github.com/pcm-dpc/COVID-19
+
+These variables are chosen because they can be significant in our analysis, as they have a strong connection with movements between the different regions and/or provinces.
+
+After adding these variables, we start by specifying and estimating three ERGM models, one for each analyzed day. Our approach to obtain the best possible model is inspired by the `stepAIC` function, which performs backward model selection by starting from a model and iteratively optimizing AIC scores by trimming down the less relevant feature at each step. The final model contains only significant variables: we finally select the one that has the lowest AIC value among all possible configurations. All models were fit using Markov Chain Monte Carlo simulations (MCMC)
 
 The three final models are:
 
 ```{r,eval=FALSE, echo = TRUE}
-model_pre <- ergm(gc_pre ~ edges + mutual + nodematch('region', diff=F) + nodecov('ideg')
-                           nodecov('out_strength'))
-model_mid <- ergm(gc_mid ~ edges + mutual  + nodematch('region', diff=F) + nodecov('odeg'))
-model_post<-ergm(gc_post ~ edges + mutual+ nodecov('covid_deaths') + nodecov('ideg')
-                           nodematch('region', diff=F) +nodecov('eig_vect_centr'))
+mod.feb <- ergm(feb.net ~ edges + mutual + nodematch('region', diff=F) + nodecov('ideg') + 
+                    nodecov('out_strength'))
+mod.mar <- ergm(mar.net ~ edges + mutual + nodematch('region', diff=F) + nodecov('odeg'))
+mod.may <- ergm(may.net ~ edges + mutual + nodematch('region', diff=F) + nodecov('ideg') + 
+                    nodecov('eig_vect_centr') + nodecov('covid_deaths'))
 ```
 
 All the three models use informations about the number of edges, mutuality (number of pairs of actors $i$ and $j$ for which
-$(i \to j)$ and $(j \to i)$ both exist) and homofily, given by the match by region, of the networks.  They differ instead in the covariates they use: the first two models don't use statistics relative to COVID-19 and this make sense, because on those dates the data relating to the epidemic did not yet show its real extent on the territory (low values of covid cases and deaths). Instead, the third model uses the covid deaths, using also the eignevector centrality that reflects the node's centralization property. 
+$(i \to j)$ and $(j \to i)$ both exist) and homophilic relations given by the regional match in model factors. The first two models don't leverage COVID-19 statistics; we argue that is is reasonable since for early dates we could not foresee the real epidemic extent on the Italian territory except for some specific regions (e.g. Lombardy and Veneto). Instead, the third model shows the relevance of the covid deaths factor, using also eignevector centrality as a proxy for node importance. We argue that those two factors are important when taken together since central provinces with high mortality rates were nonetheless able to keep strong connections with their neighbours, while more secluded ones couldn't (e.g. Milan vs. Trento) 
 
-We notice an important thing: these 3 models shows a sort of *performance decay*, in the sense that the first model, according to Goodness-of-fit diagnostics performs pretty well, while the second and third show worse and worse performances, even if for all the three models the MCMC diagnostics are good and they include all the relavant predictors. This could be a hint that three single ERGM models are not suitable for our purpose, thus considering a temporal network data analysis seems more appropriate for our problem, in which we have a graph that changes through three different moments of time.
+It is relevant to note that the 3 models shows some sort of *performance decay* where the goodness goodness-of-fit diagnostics for the MCMC procedure worsen over time for different configurations, despite remaining quite acceptable for our purposes. We interpret this as an hint to the inadequacy of individual ERGMs for modeling the evolution of a network through time, and proceed to use **temporal ERGMs** to look for better solutions.
 
-*CITARE PLOT GOF AND/OR MCMC FOR THE THREE BASIC MODELS*
+### [4.1 Mobility Patterns Through Time]{#tergms}
 
 
 
