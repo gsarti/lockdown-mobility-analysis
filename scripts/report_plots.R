@@ -13,6 +13,16 @@ graph_pre_all <- create_graph_from_data(mobility_pre, metric="n", zeros=F)
 graph_mid_all <- create_graph_from_data(mobility_mid, metric="n", zeros=F)
 graph_post_all <- create_graph_from_data(mobility_post, metric="n", zeros=F)
 
+# Focus on regions of middle Italy to capture the increasing and decreasing of betweenness
+par(mfrow=c(1,3), mai=c(0,0,0,0), omi=c(0,0,0,0), mar=c(0,2,0,4), yaxs="i")
+regions <- c("Lazio", "Umbria", "Abruzzo")
+plot_regions_subgraph(graph_pre, graph_mid, graph_post, regions=regions, mfrow=c(1,3), v_attr="betweenness")
+
+# Graphical representation of the graphs where the size of each vertex is proportional
+# to eigenvector centrality
+v_attrs <- list(eig_pre$vector*100, eig_mid$vector*100, eig_post$vector*100)
+plot_weighted_graph(graph_pre, graph_mid, graph_post, v_attr=v_attrs, mfrow = c(1,3), e_scale = 2, v_scale = 0.4)
+
 
 # Coreness, plot at 1500x750
 par(mfrow=c(1,2), mai=c(0,0,0,0), omi=c(0,0,0,0), mar=c(0,2,0,4), yaxs="i")
