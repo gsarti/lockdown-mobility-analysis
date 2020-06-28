@@ -58,7 +58,7 @@ Taken from Moodle:
 - [x] Select subnetworks for all three dataset to fit ERGs (Giant component, non-looping edges)
 - [x] Select additional features to improve the quality of fit (Mortality, Tot. population and Tot. positive per province)
 - [x] Perform the modeling R script
-- [ ] Write report section showing the structure and performances of various models
+- [x] Write report section showing the structure and performances of various models
 - [x] Add comments to the script
 
 **Useful sources:**
@@ -74,7 +74,7 @@ Taken from Moodle:
 ### 4
 
 - [x] Perform additional analysis to gain more insights about the mobility changes (Temporal modeling with `tergm`, compare with Google mobility reports)
-- [ ] Write final report section
+- [x] Write final report section
 
 **Useful sources:**
 
